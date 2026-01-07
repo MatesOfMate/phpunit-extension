@@ -4,7 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a template repository for creating **Symfony AI Mate extensions**. The MatesOfMate ecosystem allows developers to create MCP (Model Context Protocol) extensions that provide tools and resources to AI assistants.
+This is a **PHPUnit extension for symfony/ai-mate** that provides token-optimized testing tools for AI assistants.
+
+**Key Features:**
+- TOON (Token-Oriented Object Notation) format for 40-50% token reduction vs. raw PHPUnit output
+- Test execution via Symfony Process component using current PHP binary
+- JUnit XML parsing for structured results
+- Auto-detection of PHPUnit configuration files
+
+**Core Components:**
+- **Tools** (`src/Capability/`): MCP tools for running tests and listing tests
+- **Runner** (`src/Runner/`): PHPUnit process execution with PHP binary detection
+- **Parser** (`src/Parser/`): JUnit XML parsing into structured data
+- **Formatter** (`src/Formatter/`): TOON output formatting using helgesverre/toon library
+- **Discovery** (`src/Discovery/`): Test file and method discovery
+- **Config** (`src/Config/`): PHPUnit configuration detection
+
+**Available Tools:**
+- `phpunit_run_suite` - Run entire test suite with optional filtering
+- `phpunit_run_file` - Run tests from a specific file
+- `phpunit_run_method` - Run a single test method
+- `phpunit_list_tests` - List all available tests in the project
 
 ## Essential Commands
 

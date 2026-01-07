@@ -1,226 +1,251 @@
-# Extension Template for Symfony AI Mate
+# PHPUnit Extension for Symfony AI Mate
 
-A starter template for creating [MatesOfMate](https://github.com/matesofmate) extensions.
+Token-optimized PHPUnit testing tools for AI assistants. This extension provides MCP (Model Context Protocol) tools that execute PHPUnit tests and return results in TOON (Token-Oriented Object Notation) format, achieving 40-50% token reduction compared to raw PHPUnit output.
 
-## Quick Start
+## Features
 
-1. **Use this template**: Click "Use this template" on GitHub
-2. **Rename everything**: Replace `example` with your framework name
-3. **Add your tools**: Create tools in `src/Capability/`
-4. **Test it**: Run `composer test`
-5. **Publish**: Submit to Packagist
+- **Run tests efficiently** - Execute entire suite, specific files, or single methods
+- **TOON format output** - 40-50% token reduction vs. raw PHPUnit output using [helgesverre/toon](https://github.com/HelgeSverre/toon-php)
+- **Test discovery** - List all available tests in your project
+- **Auto-configuration** - Automatically detects `phpunit.xml` configuration
+- **Fast execution** - Direct Symfony Process integration with current PHP binary
+- **JUnit XML parsing** - Structured test result extraction
 
-## Structure
-
-```
-extension-template/
-├── .github/
-│   ├── workflows/
-│   │   └── ci.yml             # GitHub Actions workflow
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── 1-bug_report.md    # Bug report template
-│   │   ├── 2-feature_request.md # Feature request template
-│   │   └── config.yml         # Issue template configuration
-│   ├── CODEOWNERS             # Code ownership configuration
-│   └── PULL_REQUEST_TEMPLATE.md # PR template
-├── composer.json              # Package configuration
-├── README.md                  # This file (replace with your docs)
-├── LICENSE                    # MIT license
-├── .gitignore                 # Git ignore rules
-├── phpunit.xml.dist           # Test configuration
-├── phpstan.dist.neon          # PHPStan configuration
-├── rector.php                 # Rector configuration
-├── .php-cs-fixer.php          # PHP CS Fixer configuration
-├── src/
-│   └── Capability/
-│       ├── ExampleTool.php    # Sample tool implementation
-│       └── ExampleResource.php # Sample resource implementation
-├── config/
-│   └── services.php           # Service registration
-└── tests/
-    └── Capability/
-        ├── ExampleToolTest.php
-        └── ExampleResourceTest.php
-```
-
-## Installation (for users of your extension)
+## Installation
 
 ```bash
-composer require --dev matesofmate/your-extension
-
-# Discover the new tools
-vendor/bin/mate discover
+composer require --dev matesofmate/phpunit-extension
 ```
 
-## Creating Tools
+The extension is automatically discovered by Symfony AI Mate.
 
-Tools are PHP classes with methods marked with the `#[McpTool]` attribute:
+## Available Tools
 
+### `phpunit_run_suite`
+
+Run the entire PHPUnit test suite.
+
+**Parameters:**
+- `configuration` (optional): Path to phpunit.xml configuration file
+- `filter` (optional): Filter pattern for test names
+- `stopOnFailure` (optional): Stop execution on first failure
+
+**Examples:**
 ```php
-<?php
+// Run all tests
+phpunit_run_suite()
 
-namespace MatesOfMate\ExampleExtension\Capability;
+// Run with filter
+phpunit_run_suite(filter: "UserTest")
 
-use Mcp\Capability\Attribute\McpTool;
+// Stop on first failure
+phpunit_run_suite(stopOnFailure: true)
 
-final class ListEntitiesTool
+// Custom configuration
+phpunit_run_suite(configuration: "phpunit.custom.xml")
+```
+
+### `phpunit_run_file`
+
+Run PHPUnit tests from a specific file.
+
+**Parameters:**
+- `file` (required): Path to test file
+- `filter` (optional): Filter pattern for method names
+- `stopOnFailure` (optional): Stop execution on first failure
+
+**Examples:**
+```php
+// Run all tests in file
+phpunit_run_file("tests/Service/UserServiceTest.php")
+
+// Run specific method in file
+phpunit_run_file("tests/Api/AuthTest.php", filter: "testLogin")
+
+// Stop on first failure
+phpunit_run_file("tests/Unit/CalculatorTest.php", stopOnFailure: true)
+```
+
+### `phpunit_run_method`
+
+Run a single PHPUnit test method.
+
+**Parameters:**
+- `class` (required): Fully qualified class name
+- `method` (required): Test method name
+
+**Examples:**
+```php
+// Run specific test method
+phpunit_run_method("App\\Tests\\UserServiceTest", "testCreateUser")
+
+// Run another test
+phpunit_run_method("App\\Tests\\Api\\AuthTest", "testLoginWithValidCredentials")
+```
+
+### `phpunit_list_tests`
+
+List all available PHPUnit tests in the project.
+
+**Parameters:**
+- `directory` (optional): Specific directory to scan (defaults to configured test directories)
+
+**Examples:**
+```php
+// List all tests
+phpunit_list_tests()
+
+// List tests in specific directory
+phpunit_list_tests(directory: "tests/Unit")
+```
+
+## Output Format (TOON)
+
+TOON (Token-Oriented Object Notation) provides minimal token usage while maintaining readability:
+
+**Successful run:**
+```
+summary{tests,passed,failed,errors,warnings,skipped,time}:
+42|42|0|0|0|0|1.234s
+
+status:OK
+```
+
+**Failed run:**
+```
+summary{tests,passed,failed,errors,warnings,skipped,time}:
+156|152|3|1|0|0|4.892s
+
+failures[3]{class,method,message,file,line}:
+UserServiceTest|testCreateUser|Expected 200 got 401|UserServiceTest.php|45
+OrderTest|testCalculateTotal|99.99 !== 100.00|OrderTest.php|112
+PaymentTest|testRefund|Null returned|PaymentTest.php|78
+
+errors[1]{class,method,exception,file,line}:
+DatabaseTest|testConnection|PDOException: Connection refused|DatabaseTest.php|23
+
+status:FAILED
+```
+
+**Test listing:**
+```
+tests[4]{file,class,method}:
+tests/UserTest.php|App\Tests\UserTest|testCreate
+tests/UserTest.php|App\Tests\UserTest|testUpdate
+tests/UserTest.php|App\Tests\UserTest|testDelete
+tests/OrderTest.php|App\Tests\OrderTest|testCalculateTotal
+```
+
+### Token Efficiency
+
+Compared to standard JSON output:
+
+**JSON (186 tokens):**
+```json
 {
-    public function __construct(
-        private readonly SomeService $service,
-    ) {
-    }
-
-    #[McpTool(
-        name: 'example-list-entities',
-        description: 'Lists all entities in the application. Use when the user asks about available entities, models, or database tables.'
-    )]
-    public function execute(): string
-    {
-        $entities = $this->service->getEntities();
-
-        return json_encode([
-            'entities' => $entities,
-            'count' => count($entities),
-        ], \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT);
-    }
+  "tests": 42,
+  "passed": 39,
+  "failed": 2,
+  "time": "1.234s",
+  "failures": [
+    {"class": "UserTest", "method": "testCreate", "message": "Expected 200"}
+  ]
 }
 ```
 
-### Tool Tips
+**TOON (~110 tokens - 41% reduction):**
+```
+summary{tests,passed,failed,time}:
+42|39|2|1.234s
 
-- **name**: Use `{framework}-{action}` format, lowercase with hyphens
-- **description**: Be specific! The AI uses this to decide when to call your tool
-- **Return**: JSON strings work well for structured data
-- **Dependencies**: Use constructor injection, configure in `services.php`
-
-## Creating Resources
-
-Resources provide static context or configuration data to the AI. They return structured data with a URI, MIME type, and content:
-
-```php
-<?php
-
-namespace MatesOfMate\ExampleExtension\Capability;
-
-use Mcp\Capability\Attribute\McpResource;
-
-final class ConfigurationResource
-{
-    #[McpResource(
-        uri: 'example://config',
-        name: 'example_config',
-        mimeType: 'application/json'
-    )]
-    public function getConfiguration(): array
-    {
-        return [
-            'uri' => 'example://config',
-            'mimeType' => 'application/json',
-            'text' => json_encode([
-                'version' => '1.0.0',
-                'features' => ['feature_a' => true],
-            ], \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT),
-        ];
-    }
-}
+failures[1]{class,method,message}:
+UserTest|testCreate|Expected 200
 ```
 
-### Resource Tips
+## How It Works
 
-- **uri**: Use custom URI scheme (e.g., `example://config`, `myframework://routes`)
-- **name**: Descriptive name for the resource
-- **mimeType**: Usually `application/json` or `text/plain`
-- **Return structure**: Must include `uri`, `mimeType`, and `text` keys
+### Architecture
 
-## Registering Services
+The extension uses a layered architecture:
 
-In `config/services.php`:
+1. **Runner Layer** - Executes PHPUnit via Symfony Process (uses current PHP binary)
+2. **Parser Layer** - Extracts structured data from JUnit XML output
+3. **Formatter Layer** - Converts results to TOON format using helgesverre/toon
+4. **Tools Layer** - MCP tools with `#[McpTool]` attributes
 
-```php
-<?php
+### Process Flow
 
-use MatesOfMate\ExampleExtension\Capability\ListEntitiesTool;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-return static function (ContainerConfigurator $container): void {
-    $services = $container->services()
-        ->defaults()
-        ->autowire()
-        ->autoconfigure();
-
-    $services->set(ListEntitiesTool::class);
-};
+```
+User Request
+    ↓
+MCP Tool (RunSuiteTool, RunFileTool, etc.)
+    ↓
+PhpunitRunner (Symfony Process with current PHP binary + PHPUnit)
+    ↓
+JUnit XML Output
+    ↓
+JunitXmlParser (Extract failures, errors, summary)
+    ↓
+ToonFormatter (Convert to TOON format)
+    ↓
+Return to AI Assistant
 ```
 
-## Testing & Code Quality
+### PHP Binary Detection
+
+The extension automatically uses the same PHP binary that's currently running (`PHP_BINARY`), ensuring consistency between your environment and test execution.
+
+## Development
+
+### Quality Commands
 
 ```bash
 # Run tests
 composer test
 
-# With coverage
-composer test -- --coverage-html coverage/
-
-# Check code style and static analysis
+# Check code quality (PHPStan level 8, PHP CS Fixer, Rector)
 composer lint
 
-# Auto-fix code style and apply automated refactorings
+# Auto-fix code style and apply refactorings
 composer fix
 ```
 
-### Individual Tools
+### Testing
 
-```bash
-# PHP CS Fixer only
-vendor/bin/php-cs-fixer fix --dry-run --diff
-vendor/bin/php-cs-fixer fix
+The extension includes comprehensive tests:
 
-# PHPStan only
-vendor/bin/phpstan analyse
+- Unit tests for all core components
+- Integration tests for tool execution
+- PHPStan level 8 compliance
+- PHP CS Fixer code style enforcement
+- Rector PHP 8.2+ modernization
 
-# Rector only
-vendor/bin/rector process --dry-run
-vendor/bin/rector process
-```
+### CI/CD
 
-### Continuous Integration
+GitHub Actions automatically runs on every push and pull request:
+- **Lint**: Validates composer.json, runs Rector, PHP CS Fixer, PHPStan
+- **Test**: Runs PHPUnit on PHP 8.2 and 8.3
 
-The template includes a GitHub Actions workflow that automatically runs on every push and pull request:
+## Requirements
 
-- **Lint job**: Validates composer.json, runs Rector, PHP CS Fixer, and PHPStan
-- **Test job**: Runs PHPUnit tests on PHP 8.2 and 8.3
+- PHP 8.2 or higher
+- PHPUnit 10.0 or higher (installed in your project)
+- Symfony AI Mate 0.1 or higher
 
-The workflow is configured in `.github/workflows/ci.yml`.
+## Contributing
 
-### GitHub Templates
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-The template includes GitHub configuration files to streamline your development workflow:
+## License
 
-- **CODEOWNERS**: Define code ownership for automatic review requests (update with your GitHub username)
-- **PULL_REQUEST_TEMPLATE.md**: Standardized PR description format
-- **Issue Templates**: Bug reports and feature requests with structured formats
-- **config.yml**: Links to documentation and community resources
-
-Remember to update CODEOWNERS with your actual GitHub username or team names.
-
-## Checklist Before Publishing
-
-- [ ] Replace all `example`/`Example` references with your framework name
-- [ ] Update `composer.json` with correct package name and description
-- [ ] Update `.github/CODEOWNERS` with your GitHub username/team
-- [ ] Write meaningful tool descriptions
-- [ ] Add installation instructions to README
-- [ ] Add tests for your tools
-- [ ] Update LICENSE with your name/org
-- [ ] Tag a release (e.g., `v0.1.0`)
-- [ ] Submit to Packagist
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Resources
 
-- [Symfony AI Mate Docs](https://symfony.com/doc/current/ai/components/mate.html)
-- [Creating MCP Extensions](https://symfony.com/doc/current/ai/components/mate/extensions.html)
-- [MatesOfMate Contributing Guide](https://github.com/matesofmate/.github/blob/main/CONTRIBUTING.md)
+- [Symfony AI Mate Documentation](https://symfony.com/doc/current/ai/components/mate.html)
+- [TOON Format Specification](https://github.com/HelgeSverre/toon-php)
+- [MatesOfMate Organization](https://github.com/matesofmate)
 
 ---
 
-*Built with 🤝 by the MatesOfMate community*
+*Built with the MatesOfMate community*
