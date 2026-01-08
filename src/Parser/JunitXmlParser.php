@@ -11,8 +11,22 @@
 
 namespace MatesOfMate\PHPUnitExtension\Parser;
 
+use MatesOfMate\Common\Truncator\MessageTruncator;
+
+/**
+ * Parses JUnit XML output into structured test results.
+ *
+ * @internal
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 class JunitXmlParser
 {
+    public function __construct(
+        private readonly MessageTruncator $truncator = new MessageTruncator(),
+    ) {
+    }
+
     public function parse(string $junitXml): TestResult
     {
         if ('' === $junitXml || '0' === $junitXml) {
@@ -60,7 +74,7 @@ class JunitXmlParser
                 'file' => (string) $testcase['file'],
                 'line' => (int) $testcase['line'],
                 'type' => (string) ($failure['type'] ?? 'unknown'),
-                'message' => $this->truncate((string) $failure, 200),
+                'message' => $this->truncator->truncate((string) $failure, 200),
             ];
         }
 
@@ -88,19 +102,10 @@ class JunitXmlParser
                 'file' => (string) $testcase['file'],
                 'line' => (int) $testcase['line'],
                 'type' => (string) ($error['type'] ?? 'unknown'),
-                'message' => $this->truncate((string) $error, 200),
+                'message' => $this->truncator->truncate((string) $error, 200),
             ];
         }
 
         return $errors;
-    }
-
-    private function truncate(string $text, int $length): string
-    {
-        if (\strlen($text) <= $length) {
-            return $text;
-        }
-
-        return substr($text, 0, $length - 3).'...';
     }
 }

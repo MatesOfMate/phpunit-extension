@@ -11,29 +11,32 @@
 
 namespace MatesOfMate\PHPUnitExtension\Config;
 
+use MatesOfMate\Common\Config\ConfigurationDetector as CommonConfigurationDetector;
+
+/**
+ * Detects PHPUnit configuration files and extracts test directories.
+ *
+ * @internal
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 class ConfigurationDetector
 {
+    private readonly CommonConfigurationDetector $detector;
+
     public function __construct(
         private readonly string $projectRoot,
     ) {
-    }
-
-    public function detect(): ?string
-    {
-        $candidates = [
+        $this->detector = new CommonConfigurationDetector([
             'phpunit.xml',
             'phpunit.xml.dist',
             'phpunit.dist.xml',
-        ];
+        ]);
+    }
 
-        foreach ($candidates as $file) {
-            $path = $this->projectRoot.'/'.$file;
-            if (file_exists($path)) {
-                return $path;
-            }
-        }
-
-        return null;
+    public function detect(?string $projectRoot = null): ?string
+    {
+        return $this->detector->detect($projectRoot ?: $this->projectRoot);
     }
 
     /**
@@ -47,7 +50,7 @@ class ConfigurationDetector
             return ['tests'];
         }
 
-        $xml = simplexml_load_file($configPath);
+        $xml = @simplexml_load_file($configPath);
         if (false === $xml) {
             return ['tests'];
         }

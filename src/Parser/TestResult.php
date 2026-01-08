@@ -11,6 +11,13 @@
 
 namespace MatesOfMate\PHPUnitExtension\Parser;
 
+/**
+ * Structured test result data parsed from JUnit XML.
+ *
+ * @internal
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 readonly class TestResult
 {
     /**
@@ -27,14 +34,41 @@ readonly class TestResult
 
     public function wasSuccessful(): bool
     {
-        return 0 === $this->summary['failures'] && 0 === $this->summary['errors'];
+        return 0 === $this->getFailed() && 0 === $this->getErrors();
     }
 
     public function getPassed(): int
     {
-        return (int) ($this->summary['tests']
-            - $this->summary['failures']
-            - $this->summary['errors']
-            - $this->summary['skipped']);
+        return $this->getTests() - $this->getFailed() - $this->getErrors() - $this->getSkipped();
+    }
+
+    public function getTests(): int
+    {
+        return (int) $this->summary['tests'];
+    }
+
+    public function getFailed(): int
+    {
+        return (int) $this->summary['failures'];
+    }
+
+    public function getErrors(): int
+    {
+        return (int) $this->summary['errors'];
+    }
+
+    public function getWarnings(): int
+    {
+        return (int) $this->summary['warnings'];
+    }
+
+    public function getSkipped(): int
+    {
+        return (int) $this->summary['skipped'];
+    }
+
+    public function getTime(): float
+    {
+        return (float) $this->summary['time'];
     }
 }

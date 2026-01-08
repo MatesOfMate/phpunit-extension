@@ -17,8 +17,15 @@ use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Mcp\Capability\Attribute\McpTool;
 
+/**
+ * Runs PHPUnit tests from a specific file with token-optimized output.
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 class RunFileTool
 {
+    use BuildsPhpunitArguments;
+
     public function __construct(
         private readonly PhpunitRunner $runner,
         private readonly JunitXmlParser $parser,
@@ -28,53 +35,31 @@ class RunFileTool
     }
 
     #[McpTool(
-        name: 'phpunit_run_file',
-        description: 'Run PHPUnit tests from a specific file. Returns TOON-formatted results. Use for: testing changes to a single test file, debugging specific test class, focused test execution. Example: phpunit_run_file("tests/Service/UserServiceTest.php")'
+        name: 'phpunit-run-file',
+        description: 'Run PHPUnit tests from a specific file. Returns token-optimized TOON format. Available modes: "default" (summary + failures/errors), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: testing changes to a single test file, debugging specific test class, focused test execution.'
     )]
     public function execute(
         string $file,
         ?string $filter = null,
         bool $stopOnFailure = false,
+        string $mode = 'default',
     ): string {
         if (!file_exists($file)) {
             throw new \InvalidArgumentException("Test file not found: {$file}");
         }
 
-        $args = $this->buildArgs($file, $filter, $stopOnFailure);
+        $args = $this->buildPhpunitArgs(
+            filter: $filter,
+            file: $file,
+            stopOnFailure: $stopOnFailure,
+        );
 
         $runResult = $this->runner->run($args);
         $testResult = $this->parser->parse($runResult->getJunitXml());
-        $output = $this->formatter->format($testResult);
+        $output = $this->formatter->format($testResult, $mode);
 
         $runResult->cleanup();
 
         return $output;
-    }
-
-    /**
-     * @return array<string>
-     */
-    private function buildArgs(string $file, ?string $filter, bool $stopOnFailure): array
-    {
-        $args = [];
-
-        $configPath = $this->configDetector->detect();
-        if ($configPath) {
-            $args[] = '--configuration';
-            $args[] = $configPath;
-        }
-
-        if ($filter) {
-            $args[] = '--filter';
-            $args[] = $filter;
-        }
-
-        if ($stopOnFailure) {
-            $args[] = '--stop-on-failure';
-        }
-
-        $args[] = $file;
-
-        return $args;
     }
 }

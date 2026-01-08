@@ -26,6 +26,38 @@ This is a **PHPUnit extension for symfony/ai-mate** that provides token-optimize
 - `phpunit_run_method` - Run a single test method
 - `phpunit_list_tests` - List all available tests in the project
 
+## Response Format
+
+All tools return **raw TOON-formatted strings** for maximum token efficiency:
+
+```
+summary{tests,passed,failed,errors,time}:
+100|95|5|0|12.4s
+
+status: FAILED
+
+failures[5]{class,method,message,file,line}:
+UserTest|testCreate|Expected 200 got 401|UserTest.php|45
+...
+```
+
+## Formatter Modes
+
+Tools support multiple output modes via the `mode` parameter:
+
+- **`toon` (default)**: Compact token-optimized format (~40-50% token reduction)
+- **`summary`**: Just totals and status (ultra-compact)
+- **`detailed`**: Full error details without truncation
+- **`by-file`**: Errors grouped by file path
+- **`by-class`**: Errors grouped by test class
+
+**Example**:
+```php
+phpunit_run_suite(mode: 'summary')  // Just totals
+phpunit_run_suite(mode: 'detailed') // Full details
+phpunit_run_suite(mode: 'by-file')  // Grouped by file
+```
+
 ## Essential Commands
 
 ### Development Workflow
@@ -228,6 +260,39 @@ All PHP files must include this copyright header:
  * file that was distributed with this source code.
  */
 ```
+
+## DocBlock Annotations
+
+**@author annotation**: All class-level DocBlocks should include an @author annotation with the current user:
+```php
+/**
+ * Runs PHPUnit test suite and returns token-optimized results.
+ *
+ * @author Your Name <your@email.com>
+ */
+class RunSuiteTool
+{
+}
+```
+
+**@internal annotation**: Use @internal for classes, methods, or properties that are implementation details and should not be used by extension consumers:
+```php
+/**
+ * Parses JUnit XML output into structured data.
+ *
+ * @internal
+ * @author Your Name <your@email.com>
+ */
+class JunitXmlParser
+{
+}
+```
+
+Use @internal for:
+- Implementation detail classes (parsers, formatters, internal DTOs)
+- Private helper methods exposed for testing
+- Framework-specific adapters
+- Classes in `src/` subdirectories not meant for direct use
 
 ## Commit Message Convention
 

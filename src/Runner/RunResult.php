@@ -11,6 +11,13 @@
 
 namespace MatesOfMate\PHPUnitExtension\Runner;
 
+/**
+ * Result of a PHPUnit test run with JUnit XML output path.
+ *
+ * @internal
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 readonly class RunResult
 {
     public function __construct(

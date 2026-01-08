@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+use MatesOfMate\Common\Process\ProcessExecutor;
+use MatesOfMate\Common\Truncator\MessageTruncator;
 use MatesOfMate\PHPUnitExtension\Capability\ListTestsTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunFileTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunMethodTool;
@@ -27,11 +29,18 @@ return static function (ContainerConfigurator $container): void {
         ->autoconfigure();
 
     // Core infrastructure
+    $services->set(ProcessExecutor::class)
+        ->arg('$vendorPaths', ['%mate.root_dir%/vendor/bin/phpunit']);
     $services->set(PhpunitRunner::class)
-        ->arg('$projectRoot', '%kernel.project_dir%');
+        ->arg('$projectRoot', '%mate.root_dir%');
 
     $services->set(JunitXmlParser::class);
     $services->set(ToonFormatter::class);
+    $services->set(MessageTruncator::class)
+        ->arg('$prefixes', [
+            'Failed asserting that ',
+            'Expectation failed for ',
+        ]);
 
     $services->set(ConfigurationDetector::class)
         ->arg('$projectRoot', '%kernel.project_dir%');

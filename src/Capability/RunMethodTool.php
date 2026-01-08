@@ -17,8 +17,15 @@ use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Mcp\Capability\Attribute\McpTool;
 
+/**
+ * Runs a single PHPUnit test method with token-optimized output.
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 class RunMethodTool
 {
+    use BuildsPhpunitArguments;
+
     public function __construct(
         private readonly PhpunitRunner $runner,
         private readonly JunitXmlParser $parser,
@@ -28,42 +35,24 @@ class RunMethodTool
     }
 
     #[McpTool(
-        name: 'phpunit_run_method',
-        description: 'Run a single PHPUnit test method. Returns TOON-formatted results. Use for: debugging a specific failing test, verifying a single test fix, isolated test execution. Example: phpunit_run_method("App\\Tests\\UserServiceTest", "testCreateUser")'
+        name: 'phpunit-run-method',
+        description: 'Run a single PHPUnit test method. Returns token-optimized TOON format. Available modes: "default" (summary + failure/error details), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: debugging a specific failing test, verifying a single test fix, isolated test execution.'
     )]
     public function execute(
         string $class,
         string $method,
+        string $mode = 'default',
     ): string {
         $filter = \sprintf('%s::%s$', preg_quote($class, '/'), preg_quote($method, '/'));
 
-        $args = $this->buildArgs($filter);
+        $args = $this->buildPhpunitArgs(filter: $filter);
 
         $runResult = $this->runner->run($args);
         $testResult = $this->parser->parse($runResult->getJunitXml());
-        $output = $this->formatter->format($testResult);
+        $output = $this->formatter->format($testResult, $mode);
 
         $runResult->cleanup();
 
         return $output;
-    }
-
-    /**
-     * @return array<string>
-     */
-    private function buildArgs(string $filter): array
-    {
-        $args = [];
-
-        $configPath = $this->configDetector->detect();
-        if ($configPath) {
-            $args[] = '--configuration';
-            $args[] = $configPath;
-        }
-
-        $args[] = '--filter';
-        $args[] = $filter;
-
-        return $args;
     }
 }
