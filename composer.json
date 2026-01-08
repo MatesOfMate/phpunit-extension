@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": ">=8.2",
+        "matesofmate/common": "^0.1@dev",
         "helgesverre/toon": "^1.0",
         "symfony/ai-mate": "^0.1",
         "symfony/finder": "^6.0|^7.0",
@@ -39,7 +40,10 @@
             "scan-dirs": [
                 "src/Capability"
             ],
-            "includes": ["config/services.php"]
+            "includes": ["config/config.php"]
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
         }
     },
     "scripts": {

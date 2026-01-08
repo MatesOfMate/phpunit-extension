@@ -13,6 +13,13 @@ namespace MatesOfMate\PHPUnitExtension\Discovery;
 
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Discovers PHPUnit test files and methods in a project.
+ *
+ * @internal
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 class TestDiscovery
 {
     public function __construct(
@@ -59,14 +66,12 @@ class TestDiscovery
 
         $tests = [];
 
-        // Extract class name
         if (!preg_match('/class\s+(\w+)\s+extends/', $content, $classMatch)) {
             return [];
         }
 
         $className = $classMatch[1];
 
-        // Extract namespace
         $namespace = '';
         if (preg_match('/namespace\s+([\w\\\\]+);/', $content, $nsMatch)) {
             $namespace = $nsMatch[1];
@@ -74,7 +79,6 @@ class TestDiscovery
 
         $fqcn = '' !== $namespace && '0' !== $namespace ? $namespace.'\\'.$className : $className;
 
-        // Extract test methods
         preg_match_all('/public\s+function\s+(test\w+)\s*\(/', $content, $methodMatches);
 
         foreach ($methodMatches[1] as $method) {

@@ -26,6 +26,122 @@ This is a **PHPUnit extension for symfony/ai-mate** that provides token-optimize
 - `phpunit_run_method` - Run a single test method
 - `phpunit_list_tests` - List all available tests in the project
 
+## Shared Components
+
+This extension uses the `matesofmate/common` package for shared functionality:
+
+**Location**: Separate package at monorepo root, used via composer path repositories
+
+**Components**:
+- **Process**: ProcessExecutorInterface, ProcessExecutor, ProcessResult for CLI tool execution with PHP binary reuse
+- **Config**: ConfigurationDetectorInterface, ConfigurationDetector for auto-detecting config files
+- **Formatter**: MessageTruncatorInterface, MessageTruncator, ToonFormatterInterface, ErrorGrouperInterface for token-efficient output
+- **DTO**: ProcessResult for command execution results
+
+**Composer Path Repository Setup**:
+
+The common package is configured as a path repository in `composer.json`:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../common"
+        }
+    ],
+    "require": {
+        "matesofmate/common": "*@dev"
+    }
+}
+```
+
+After running `composer install`, the common package is symlinked automatically into `vendor/matesofmate/common`.
+
+**Example Implementation**:
+
+```php
+// Process Executor (uses composition)
+use MatesOfMate\Common\Process\ProcessExecutor as CommonProcessExecutor;
+use MatesOfMate\Common\Process\ProcessExecutorInterface;
+
+class PhpunitProcessExecutor implements ProcessExecutorInterface
+{
+    private readonly CommonProcessExecutor $executor;
+
+    public function __construct()
+    {
+        $cwd = getcwd();
+        $vendorPaths = false !== $cwd ? [
+            $cwd.'/vendor/bin/phpunit',
+            $cwd.'/vendor/phpunit/phpunit/phpunit',
+        ] : [];
+
+        $this->executor = new CommonProcessExecutor($vendorPaths);
+    }
+
+    public function execute(array $command, int $timeout = 300): ProcessResult
+    {
+        return $this->executor->execute($command, $timeout);
+    }
+}
+
+// Configuration Detector (uses composition)
+use MatesOfMate\Common\Config\ConfigurationDetector as CommonConfigDetector;
+use MatesOfMate\Common\Config\ConfigurationDetectorInterface;
+
+class ConfigurationDetector implements ConfigurationDetectorInterface
+{
+    private readonly CommonConfigDetector $detector;
+
+    public function __construct(private readonly string $projectRoot)
+    {
+        $this->detector = new CommonConfigDetector([
+            'phpunit.xml',
+            'phpunit.xml.dist',
+            'phpunit.dist.xml',
+        ]);
+    }
+
+    public function detect(?string $projectRoot = null): ?string
+    {
+        return $this->detector->detect($this->projectRoot);
+    }
+}
+```
+
+## Response Format
+
+All tools return **raw TOON-formatted strings** for maximum token efficiency:
+
+```
+summary{tests,passed,failed,errors,time}:
+100|95|5|0|12.4s
+
+status: FAILED
+
+failures[5]{class,method,message,file,line}:
+UserTest|testCreate|Expected 200 got 401|UserTest.php|45
+...
+```
+
+## Formatter Modes
+
+Tools support multiple output modes via the `mode` parameter:
+
+- **`toon` (default)**: Compact token-optimized format (~40-50% token reduction)
+- **`summary`**: Just totals and status (ultra-compact)
+- **`detailed`**: Full error details without truncation
+- **`by-file`**: Errors grouped by file path
+- **`by-class`**: Errors grouped by test class
+
+**Example**:
+```php
+phpunit_run_suite(mode: 'summary')  // Just totals
+phpunit_run_suite(mode: 'detailed') // Full details
+phpunit_run_suite(mode: 'by-file')  // Grouped by file
+```
+
 ## Essential Commands
 
 ### Development Workflow
@@ -228,6 +344,39 @@ All PHP files must include this copyright header:
  * file that was distributed with this source code.
  */
 ```
+
+## DocBlock Annotations
+
+**@author annotation**: All class-level DocBlocks should include an @author annotation with the current user:
+```php
+/**
+ * Runs PHPUnit test suite and returns token-optimized results.
+ *
+ * @author Your Name <your@email.com>
+ */
+class RunSuiteTool
+{
+}
+```
+
+**@internal annotation**: Use @internal for classes, methods, or properties that are implementation details and should not be used by extension consumers:
+```php
+/**
+ * Parses JUnit XML output into structured data.
+ *
+ * @internal
+ * @author Your Name <your@email.com>
+ */
+class JunitXmlParser
+{
+}
+```
+
+Use @internal for:
+- Implementation detail classes (parsers, formatters, internal DTOs)
+- Private helper methods exposed for testing
+- Framework-specific adapters
+- Classes in `src/` subdirectories not meant for direct use
 
 ## Commit Message Convention
 

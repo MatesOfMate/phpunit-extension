@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
  */
 
+use MatesOfMate\Common\Truncator\MessageTruncator;
 use MatesOfMate\PHPUnitExtension\Capability\ListTestsTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunFileTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunMethodTool;
@@ -17,6 +18,7 @@ use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Discovery\TestDiscovery;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
+use MatesOfMate\PHPUnitExtension\Runner\PhpunitProcessExecutor;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -27,11 +29,18 @@ return static function (ContainerConfigurator $container): void {
         ->autoconfigure();
 
     // Core infrastructure
+    $services->set(PhpunitProcessExecutor::class);
+
     $services->set(PhpunitRunner::class)
         ->arg('$projectRoot', '%kernel.project_dir%');
 
     $services->set(JunitXmlParser::class);
     $services->set(ToonFormatter::class);
+    $services->set(MessageTruncator::class)
+        ->arg('$prefixes', [
+            'Failed asserting that ',
+            'Expectation failed for ',
+        ]);
 
     $services->set(ConfigurationDetector::class)
         ->arg('$projectRoot', '%kernel.project_dir%');

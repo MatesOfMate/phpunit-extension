@@ -9,8 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace MatesOfMate\PHPUnitExtension\Runner;
+namespace MatesOfMate\PHPUnitExtension\DTO;
 
+/**
+ * Result of a PHPUnit test run with JUnit XML output path.
+ *
+ * @internal
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
 readonly class RunResult
 {
     public function __construct(
