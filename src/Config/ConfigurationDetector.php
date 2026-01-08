@@ -50,7 +50,7 @@ class ConfigurationDetector
             return ['tests'];
         }
 
-        $xml = simplexml_load_file($configPath);
+        $xml = @simplexml_load_file($configPath);
         if (false === $xml) {
             return ['tests'];
         }

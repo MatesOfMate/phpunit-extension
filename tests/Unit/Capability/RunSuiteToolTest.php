@@ -13,11 +13,11 @@ namespace MatesOfMate\PHPUnitExtension\Tests\Unit\Capability;
 
 use MatesOfMate\PHPUnitExtension\Capability\RunSuiteTool;
 use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
-use MatesOfMate\PHPUnitExtension\DTO\RunResult;
-use MatesOfMate\PHPUnitExtension\DTO\TestResult;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
+use MatesOfMate\PHPUnitExtension\Parser\TestResult;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
+use MatesOfMate\PHPUnitExtension\Runner\RunResult;
 use PHPUnit\Framework\TestCase;
 
 /**

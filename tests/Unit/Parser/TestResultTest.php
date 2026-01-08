@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace MatesOfMate\PHPUnitExtension\Tests\Unit\DTO;
+namespace MatesOfMate\PHPUnitExtension\Tests\Unit\Parser;
 
-use MatesOfMate\PHPUnitExtension\DTO\TestResult;
+use MatesOfMate\PHPUnitExtension\Parser\TestResult;
 use PHPUnit\Framework\TestCase;
 
 /**

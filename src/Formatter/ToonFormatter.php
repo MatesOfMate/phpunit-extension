@@ -11,7 +11,7 @@
 
 namespace MatesOfMate\PHPUnitExtension\Formatter;
 
-use MatesOfMate\PHPUnitExtension\DTO\TestResult;
+use MatesOfMate\PHPUnitExtension\Parser\TestResult;
 
 /**
  * Formats test results using TOON (Token-Oriented Object Notation) for token-efficient output.

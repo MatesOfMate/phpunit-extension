@@ -12,7 +12,6 @@
 namespace MatesOfMate\PHPUnitExtension\Parser;
 
 use MatesOfMate\Common\Truncator\MessageTruncator;
-use MatesOfMate\PHPUnitExtension\DTO\TestResult;
 
 /**
  * Parses JUnit XML output into structured test results.

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace MatesOfMate\PHPUnitExtension\DTO;
+namespace MatesOfMate\PHPUnitExtension\Parser;
 
 /**
  * Structured test result data parsed from JUnit XML.

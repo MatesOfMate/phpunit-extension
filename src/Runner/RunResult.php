@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace MatesOfMate\PHPUnitExtension\DTO;
+namespace MatesOfMate\PHPUnitExtension\Runner;
 
 /**
  * Result of a PHPUnit test run with JUnit XML output path.

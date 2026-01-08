@@ -11,8 +11,8 @@
 
 namespace MatesOfMate\PHPUnitExtension\Tests\Unit\Runner;
 
+use MatesOfMate\Common\Process\ProcessExecutor;
 use MatesOfMate\Common\Process\ProcessResult;
-use MatesOfMate\PHPUnitExtension\Runner\PhpunitProcessExecutor;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +23,7 @@ class PhpunitRunnerTest extends TestCase
 {
     public function testRunExecutesPhpunitAndReturnsRunResult(): void
     {
-        $executor = $this->createMock(PhpunitProcessExecutor::class);
+        $executor = $this->createMock(ProcessExecutor::class);
         $executor->expects($this->once())
             ->method('execute')
             ->with(
@@ -48,7 +48,7 @@ class PhpunitRunnerTest extends TestCase
 
     public function testRunIncludesProvidedArguments(): void
     {
-        $executor = $this->createMock(PhpunitProcessExecutor::class);
+        $executor = $this->createMock(ProcessExecutor::class);
         $executor->expects($this->once())
             ->method('execute')
             ->with(
@@ -71,7 +71,7 @@ class PhpunitRunnerTest extends TestCase
 
     public function testRunCreatesTemporaryJunitFile(): void
     {
-        $executor = $this->createMock(PhpunitProcessExecutor::class);
+        $executor = $this->createMock(ProcessExecutor::class);
         $executor->expects($this->once())
             ->method('execute')
             ->willReturn(new ProcessResult(0, '', ''));
@@ -81,7 +81,11 @@ class PhpunitRunnerTest extends TestCase
 
         $tempDir = sys_get_temp_dir();
         $this->assertNotEmpty($tempDir);
-        $this->assertStringStartsWith($tempDir, $result->junitXmlPath);
+        // On macOS, temp paths might start with /private, so we need to normalize the comparison
+        $normalizedTempDir = str_replace('/private', '', $tempDir);
+        $normalizedPath = str_replace('/private', '', $result->junitXmlPath);
+        $this->assertNotEmpty($normalizedTempDir, 'Normalized temp directory should not be empty');
+        $this->assertStringStartsWith($normalizedTempDir, $normalizedPath);
         $this->assertStringContainsString('phpunit_junit_', $result->junitXmlPath);
 
         // Cleanup
@@ -90,7 +94,7 @@ class PhpunitRunnerTest extends TestCase
 
     public function testRunHandlesExecutionFailure(): void
     {
-        $executor = $this->createMock(PhpunitProcessExecutor::class);
+        $executor = $this->createMock(ProcessExecutor::class);
         $executor->expects($this->once())
             ->method('execute')
             ->willReturn(new ProcessResult(1, '', 'error'));

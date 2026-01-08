@@ -11,7 +11,7 @@
 
 namespace MatesOfMate\PHPUnitExtension\Runner;
 
-use MatesOfMate\PHPUnitExtension\DTO\RunResult;
+use MatesOfMate\Common\Process\ProcessExecutor;
 
 /**
  * Runs PHPUnit tests and generates JUnit XML output.
@@ -22,7 +22,7 @@ use MatesOfMate\PHPUnitExtension\DTO\RunResult;
  */
 class PhpunitRunner
 {
-    public function __construct(private readonly PhpunitProcessExecutor $executor)
+    public function __construct(private readonly ProcessExecutor $executor)
     {
     }
 

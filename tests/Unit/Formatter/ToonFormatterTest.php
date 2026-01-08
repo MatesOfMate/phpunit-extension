@@ -11,8 +11,8 @@
 
 namespace MatesOfMate\PHPUnitExtension\Tests\Unit\Formatter;
 
-use MatesOfMate\PHPUnitExtension\DTO\TestResult;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
+use MatesOfMate\PHPUnitExtension\Parser\TestResult;
 use PHPUnit\Framework\TestCase;
 
 /**
