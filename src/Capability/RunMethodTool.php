@@ -39,10 +39,17 @@ class RunMethodTool
         description: 'Run a single PHPUnit test method. Returns token-optimized TOON format. Available modes: "default" (summary + failure/error details), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: debugging a specific failing test, verifying a single test fix, isolated test execution.'
     )]
     public function execute(
-        string $class,
-        string $method,
+        ?string $class = null,
+        ?string $method = null,
         string $mode = 'default',
     ): string {
+        if (null === $class) {
+            throw new \InvalidArgumentException('The "class" parameter is required for phpunit-run-method tool.');
+        }
+        if (null === $method) {
+            throw new \InvalidArgumentException('The "method" parameter is required for phpunit-run-method tool.');
+        }
+
         $filter = \sprintf('%s::%s$', preg_quote($class, '/'), preg_quote($method, '/'));
 
         $args = $this->buildPhpunitArgs(filter: $filter);

@@ -12,6 +12,7 @@
 namespace MatesOfMate\PHPUnitExtension\Runner;
 
 use MatesOfMate\Common\Process\ProcessExecutor;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Runs PHPUnit tests and generates JUnit XML output.
@@ -22,8 +23,9 @@ use MatesOfMate\Common\Process\ProcessExecutor;
  */
 class PhpunitRunner
 {
-    public function __construct(private readonly ProcessExecutor $executor)
-    {
+    public function __construct(
+        private readonly ProcessExecutor $executor,
+    ) {
     }
 
     /**

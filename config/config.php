@@ -10,7 +10,6 @@
  */
 
 use MatesOfMate\Common\Process\ProcessExecutor;
-use MatesOfMate\Common\Truncator\MessageTruncator;
 use MatesOfMate\PHPUnitExtension\Capability\ListTestsTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunFileTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunMethodTool;
@@ -21,6 +20,7 @@ use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services()
@@ -29,17 +29,13 @@ return static function (ContainerConfigurator $container): void {
         ->autoconfigure();
 
     // Core infrastructure
-    $services->set(ProcessExecutor::class)
+    $services->set('matesofmate_phpunit.process_executor', ProcessExecutor::class)
         ->arg('$vendorPaths', ['%mate.root_dir%/vendor/bin/phpunit']);
-    $services->set(PhpunitRunner::class);
+    $services->set(PhpunitRunner::class)
+        ->arg('$executor', service('matesofmate_phpunit.process_executor'));
 
     $services->set(JunitXmlParser::class);
     $services->set(ToonFormatter::class);
-    $services->set(MessageTruncator::class)
-        ->arg('$prefixes', [
-            'Failed asserting that ',
-            'Expectation failed for ',
-        ]);
 
     $services->set(ConfigurationDetector::class)
         ->arg('$projectRoot', '%mate.root_dir%');

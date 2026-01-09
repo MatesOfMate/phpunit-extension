@@ -39,13 +39,13 @@ class RunFileTool
         description: 'Run PHPUnit tests from a specific file. Returns token-optimized TOON format. Available modes: "default" (summary + failures/errors), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: testing changes to a single test file, debugging specific test class, focused test execution.'
     )]
     public function execute(
-        string $file,
+        ?string $file = null,
         ?string $filter = null,
         bool $stopOnFailure = false,
         string $mode = 'default',
     ): string {
-        if (!file_exists($file)) {
-            throw new \InvalidArgumentException("Test file not found: {$file}");
+        if (null === $file) {
+            throw new \InvalidArgumentException('The "file" parameter is required for phpunit-run-file tool.');
         }
 
         $args = $this->buildPhpunitArgs(

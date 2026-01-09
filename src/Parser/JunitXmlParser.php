@@ -23,7 +23,10 @@ use MatesOfMate\Common\Truncator\MessageTruncator;
 class JunitXmlParser
 {
     public function __construct(
-        private readonly MessageTruncator $truncator = new MessageTruncator(),
+        private readonly MessageTruncator $truncator = new MessageTruncator([
+            'Failed asserting that ',
+            'Expectation failed for ',
+        ]),
     ) {
     }
 
