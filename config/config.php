@@ -31,8 +31,7 @@ return static function (ContainerConfigurator $container): void {
     // Core infrastructure
     $services->set(ProcessExecutor::class)
         ->arg('$vendorPaths', ['%mate.root_dir%/vendor/bin/phpunit']);
-    $services->set(PhpunitRunner::class)
-        ->arg('$projectRoot', '%mate.root_dir%');
+    $services->set(PhpunitRunner::class);
 
     $services->set(JunitXmlParser::class);
     $services->set(ToonFormatter::class);
@@ -43,10 +42,10 @@ return static function (ContainerConfigurator $container): void {
         ]);
 
     $services->set(ConfigurationDetector::class)
-        ->arg('$projectRoot', '%kernel.project_dir%');
+        ->arg('$projectRoot', '%mate.root_dir%');
 
     $services->set(TestDiscovery::class)
-        ->arg('$projectRoot', '%kernel.project_dir%');
+        ->arg('$projectRoot', '%mate.root_dir%');
 
     // Tools - automatically discovered by #[McpTool] attribute
     $services->set(RunSuiteTool::class);
