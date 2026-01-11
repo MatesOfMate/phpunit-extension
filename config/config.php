@@ -10,6 +10,7 @@
  */
 
 use MatesOfMate\Common\Process\ProcessExecutor;
+use MatesOfMate\PHPUnitExtension\Capability\ConfigResource;
 use MatesOfMate\PHPUnitExtension\Capability\ListTestsTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunFileTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunMethodTool;
@@ -49,4 +50,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(RunFileTool::class);
     $services->set(RunMethodTool::class);
     $services->set(ListTestsTool::class);
+
+    // Resources - automatically discovered by #[McpResource] attribute
+    $services->set(ConfigResource::class);
 };

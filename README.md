@@ -58,4 +58,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-*Built with the MatesOfMate community*
+*"Because every Mate needs Mates"*
