@@ -1,94 +1,14 @@
 # AGENTS.md
 
-Guidelines for AI agents helping users create Symfony AI Mate extensions from this template.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Agent Role
+## Project Overview
 
-When assisting with this repository, you are helping developers **create new MCP extensions** for their frameworks, CMSs, or tools. This is a template repository - users will customize it for their needs.
+PHPUnit extension for Symfony AI Mate providing AI assistants with token-optimized test execution tools. This extension executes PHPUnit tests and returns results in TOON (Token-Oriented Object Notation) format, achieving 40-50% token reduction compared to raw PHPUnit output.
 
-## Key Responsibilities
+## Common Commands
 
-### 1. Guide Template Customization
-Help users replace placeholder content:
-- Replace `Example`/`ExampleExtension` with their framework name
-- Update `composer.json` package name to `matesofmate/{framework}-extension`
-- Update namespace from `MatesOfMate\ExampleExtension\` to `MatesOfMate\{Framework}Extension\`
-- Replace `@your-username` in CODEOWNERS with actual GitHub username
-
-### 2. Tool/Resource Development
-Assist with creating MCP capabilities:
-- Tools: Executable actions marked with `#[McpTool]`
-- Resources: Static context data marked with `#[McpResource]`
-- Service registration in `config/services.php`
-- Comprehensive tests in `tests/Capability/`
-
-### 3. Quality Assurance
-Ensure code meets standards:
-- Run `composer lint` before commits
-- Run `composer test` to verify functionality
-- Check that all examples use `\JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT`
-- Verify proper file headers are present
-
-### 4. Documentation Support
-Help maintain clear documentation:
-- Update README.md with framework-specific installation steps
-- Document tool capabilities and when AI should use them
-- Provide usage examples for end users
-
-## Template-Specific Standards
-
-### Code Style Conventions
-- ✅ **No** `declare(strict_types=1)` - Omitted by design
-- ✅ **No** `final` classes - Allow extensibility
-- ✅ All JSON encoding uses `\JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT`
-- ✅ File headers include MatesOfMate copyright
-
-### Tool Implementation Checklist
-When creating new tools:
-- [ ] Clear, descriptive `#[McpTool]` name: `{framework}-{action}`
-- [ ] Helpful description explaining when AI should use it
-- [ ] Returns JSON string for structured data
-- [ ] Registered in `config/services.php`
-- [ ] Has corresponding test in `tests/Capability/`
-- [ ] Test validates JSON output structure
-
-### Resource Implementation Checklist
-When creating new resources:
-- [ ] Custom URI scheme: `{framework}://path`
-- [ ] Descriptive name: `{framework}_{name}`
-- [ ] Returns array with `uri`, `mimeType`, `text` keys
-- [ ] `text` value is JSON string (for JSON mimeType)
-- [ ] Registered in `config/services.php`
-- [ ] Has corresponding test validating structure
-
-## Workflow Guidelines
-
-### When User Starts New Extension
-1. Confirm framework/CMS they're building for
-2. Help search/replace all `Example` references
-3. Update `composer.json` with correct package name
-4. Guide CODEOWNERS update
-5. Ensure tests pass: `composer test && composer lint`
-
-### When Adding New Tools
-1. Discuss tool purpose and when AI should use it
-2. Create class in `src/Capability/`
-3. Add `#[McpTool]` attribute with clear description
-4. Implement method returning JSON
-5. Register in `config/services.php`
-6. Create test validating behavior
-7. Run quality checks
-
-### When Adding New Resources
-1. Identify what static context would be helpful
-2. Create class in `src/Capability/`
-3. Add `#[McpResource]` attribute with URI and name
-4. Implement method returning proper structure
-5. Register in `config/services.php`
-6. Create test validating return structure
-7. Run quality checks
-
-## Development Commands Reference
+### Development Workflow
 
 ```bash
 # Install dependencies
@@ -97,112 +17,217 @@ composer install
 # Run all tests
 composer test
 
-# Run tests with coverage
-composer test -- --coverage-html coverage/
+# Run specific test
+vendor/bin/phpunit tests/Unit/Capability/RunSuiteToolTest.php
+vendor/bin/phpunit --filter testExecute
 
-# Check all quality tools
+# Check code quality (validates composer.json, runs Rector, PHP CS Fixer, PHPStan)
 composer lint
 
-# Auto-fix code style and refactoring
+# Auto-fix code style and apply automated refactorings
 composer fix
+```
 
-# Individual tools
+### Individual Quality Tools
+
+```bash
+# PHP CS Fixer (code style)
+vendor/bin/php-cs-fixer fix --dry-run --diff  # Check only
+vendor/bin/php-cs-fixer fix                   # Apply fixes
+
+# PHPStan (static analysis at level 8)
 vendor/bin/phpstan analyse
-vendor/bin/php-cs-fixer fix --dry-run --diff
-vendor/bin/rector process --dry-run
-vendor/bin/phpunit tests/Capability/SpecificTest.php
+
+# Rector (automated refactoring to PHP 8.2)
+vendor/bin/rector process --dry-run           # Preview changes
+vendor/bin/rector process                     # Apply changes
 ```
 
-## Common Mistakes to Prevent
+## Architecture
 
-### ❌ Don't
-- Don't add `declare(strict_types=1)` to PHP files
-- Don't make classes `final`
-- Don't use `json_encode()` without error flags
-- Don't forget to register new capabilities in `config/services.php`
-- Don't skip tests
-- Don't use generic tool descriptions like "A tool for doing things"
+### Component Structure
 
-### ✅ Do
-- Keep classes extensible (non-final)
-- Use `\JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT` for JSON encoding
-- Write specific, actionable tool descriptions
-- Register all capabilities in service container
-- Test all tools and resources
-- Run `composer lint` before committing
+**MCP Tools** (`src/Capability/`):
+- `RunSuiteTool` - Execute full PHPUnit test suite
+- `RunFileTool` - Execute tests in specific file
+- `RunMethodTool` - Execute single test method
+- `ListTestsTool` - Discover all available tests in project
+- `BuildsPhpunitArguments` (trait) - Shared argument building logic
 
-## Communication Style
+**Core Services**:
+- `Runner/PhpunitRunner` - Executes PHPUnit with JUnit XML logging via ProcessExecutor
+- `Parser/JunitXmlParser` - Parses JUnit XML into structured TestResult
+- `Parser/TestResult` - DTO containing test counts, failures, errors, warnings, time
+- `Formatter/ToonFormatter` - Converts results to TOON format with multiple modes
+- `Config/ConfigurationDetector` - Auto-detects phpunit.xml/phpunit.xml.dist
+- `Discovery/TestDiscovery` - Finds test files and methods using Symfony Finder
 
-- **Practical and hands-on** - Show code examples
-- **Encouraging** - Building MCP extensions is new for many
-- **Specific** - Refer to exact file paths and line numbers
-- **Quality-focused** - Remind about running tests and linting
-
-## Before Publishing Checklist
-
-Help users verify before publishing their extension:
-- [ ] All `Example`/`ExampleExtension` references replaced
-- [ ] `composer.json` has correct package name
-- [ ] CODEOWNERS updated with real GitHub username
-- [ ] README.md has framework-specific documentation
-- [ ] All tools have clear descriptions
-- [ ] All tests pass: `composer test`
-- [ ] All quality checks pass: `composer lint`
-- [ ] LICENSE file updated with correct name/org
-- [ ] Tagged release (e.g., `v0.1.0`)
-- [ ] Submitted to Packagist
-
-## Commit Message Guidelines
-
-**CRITICAL**: Never include AI attribution in commit messages.
-
-### Format
-```
-Short descriptive summary
-
-- Conceptual change or improvement
-- Another concept addressed
-- Additional improvements made
-```
-
-### Rules
-- ❌ **NEVER** add "Co-Authored-By: Claude" or similar AI attribution
-- ❌ **NEVER** mention "coded by claude-code" or AI assistance
-- ✅ Describe CONCEPTS and improvements, not file names
-- ✅ Use natural language explaining what changed
-- ✅ Keep summary under 50 characters
-- ✅ Focus on WHY and WHAT, not technical details
-
-### Good Examples
-```
-Add entity relationship discovery
-
-- Enable AI to understand entity associations
-- Include bidirectional relationship mapping
-- Provide inverse side information
-```
+### Data Flow
 
 ```
-Improve tool error handling
-
-- Add graceful degradation for missing dependencies
-- Provide actionable error messages
-- Include recovery suggestions
+Tool → PhpunitRunner → ProcessExecutor (common package)
+                                ↓
+                         PHPUnit CLI with --log-junit
+                                ↓
+                         JunitXmlParser → TestResult
+                                ↓
+                         ToonFormatter → TOON output
 ```
 
-### Bad Examples
-```
-Update ExampleTool.php
+### Output Modes
 
-Co-Authored-By: Claude Code <noreply@anthropic.com>
+The ToonFormatter supports five output modes:
+- `default` - Summary + failures/errors with truncated messages (~40-50% token reduction)
+- `summary` - Just totals and status (tests, passed, failed, errors, time)
+- `detailed` - Full error messages without truncation
+- `by-file` - Errors grouped by file path (basename)
+- `by-class` - Errors grouped by test class (short class name)
+
+### Common Package Integration
+
+Uses `matesofmate/common` package for shared functionality:
+
+**ProcessExecutor** - CLI tool execution with PHP binary reuse
+- Configured with vendor path: `%mate.root_dir%/vendor/bin/phpunit`
+- Default timeout: 300 seconds
+- Always uses `--log-junit` to generate JUnit XML output
+
+**ConfigurationDetector** - Auto-detects config files in order:
+1. phpunit.xml
+2. phpunit.xml.dist
+
+### Service Registration
+
+All services registered in `config/config.php` with:
+- Autowiring enabled
+- Autoconfiguration enabled (discovers #[McpTool] attributes)
+- Custom process executor with vendor path injection
+- Project root parameter injection for configuration detection and test discovery
+
+## Code Quality Standards
+
+### PHP Requirements
+- PHP 8.2+ minimum
+- No `declare(strict_types=1)` by convention
+- No final classes (extensibility)
+- JSON encoding: Always use `\JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT`
+
+### Quality Tools Configuration
+- **PHPStan**: Level 8, includes phpstan-phpunit extension
+- **PHP CS Fixer**: `@Symfony` + `@Symfony:risky` rulesets with ordered class elements
+- **Rector**: PHP 8.2, code quality, dead code removal, early return, type declarations
+- **PHPUnit**: Version 10.0+
+
+### File Header Template
+
+All PHP files must include:
+```php
+<?php
+
+/*
+ * This file is part of the MatesOfMate Organisation.
+ *
+ * (c) Johannes Wachter <johannes@sulu.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 ```
 
-```
-Add new feature - coded by claude-code
+### DocBlock Annotations
+
+**@author annotation**: Required on all class-level DocBlocks:
+```php
+/**
+ * Description of the class.
+ *
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
+class YourClass
 ```
 
-### When Creating Commits for Users
-Always help users create clean commit messages that:
-- Explain what conceptually changed
-- Avoid technical file paths or implementation details
-- Never include AI attribution or mentions
+**@internal annotation**: Mark implementation details not for external use:
+```php
+/**
+ * Internal parser for JUnit XML output.
+ *
+ * @internal
+ * @author Johannes Wachter <johannes@sulu.io>
+ */
+class JunitXmlParser
+```
+
+Use @internal for:
+- Parser, formatter, runner classes
+- Helper traits
+- Internal DTOs (RunResult, TestResult)
+- Classes not intended for extension consumers
+
+## Discovery Mechanism
+
+Symfony AI Mate auto-discovers tools via `composer.json`:
+
+```json
+{
+    "extra": {
+        "ai-mate": {
+            "scan-dirs": ["src/Capability"],
+            "includes": ["config/config.php"]
+        }
+    }
+}
+```
+
+## Testing Philosophy
+
+### Test Structure
+- Tests mirror `src/` structure in `tests/Unit/`
+- Extend `PHPUnit\Framework\TestCase`
+- Test method names: `testExecute`, `testFormatDefault`, `testParseJunitXml`, etc.
+
+### Key Testing Areas
+- Tool parameter validation (configuration paths, filter patterns, stop-on-failure flags)
+- JUnit XML parsing correctness
+- TOON format output validation
+- Configuration detection logic
+- Test discovery functionality
+
+### Integration Testing
+- Service registration and dependency injection
+- Attribute-based discovery (#[McpTool])
+- Process executor integration with common package
+
+## Common Development Patterns
+
+### Adding New Tools
+
+1. Create tool class in `src/Capability/` with `#[McpTool]` attribute
+2. Inject required services via constructor (PhpunitRunner, parsers, formatters)
+3. Use `BuildsPhpunitArguments` trait if needed for argument construction
+4. Register service in `config/config.php`
+5. Add corresponding test in `tests/Unit/Capability/`
+
+### Adding New Output Modes
+
+1. Add mode to enum in `#[Schema]` attribute on tool parameters
+2. Implement format method in `ToonFormatter` (e.g., `formatCustomMode()`)
+3. Add match arm in `ToonFormatter::format()` method
+4. Add test case in `ToonFormatterTest`
+
+## Commit Message Convention
+
+Keep commit messages clean without AI attribution.
+
+**Format:**
+```
+Short summary (50 chars or less)
+
+- Conceptual change description
+- Another concept or improvement
+```
+
+**Rules:**
+- ❌ NO AI attribution (no "Co-Authored-By: Claude", etc.)
+- ✅ Short, descriptive summary line
+- ✅ Bullet list describing concepts/improvements
+- ✅ Focus on the WHY and WHAT

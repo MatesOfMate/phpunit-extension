@@ -16,6 +16,7 @@ use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Mcp\Capability\Attribute\McpTool;
+use Mcp\Capability\Attribute\Schema;
 
 /**
  * Runs the full PHPUnit test suite with token-optimized output.
@@ -39,9 +40,22 @@ class RunSuiteTool
         description: 'Run the full PHPUnit test suite. Returns token-optimized TOON format. Available modes: "default" (summary + failures/errors with truncated messages), "summary" (just totals and status), "detailed" (full error messages without truncation), "by-file" (errors grouped by file path), "by-class" (errors grouped by test class). Use for: running all tests, CI validation, checking overall test health.'
     )]
     public function execute(
+        #[Schema(
+            description: 'Path to PHPUnit configuration file (defaults to auto-detection)'
+        )]
         ?string $configuration = null,
+        #[Schema(
+            description: 'Filter pattern to match specific test names or methods'
+        )]
         ?string $filter = null,
+        #[Schema(
+            description: 'Stop execution upon first failure or error'
+        )]
         bool $stopOnFailure = false,
+        #[Schema(
+            description: 'Output format mode',
+            enum: ['default', 'summary', 'detailed', 'by-file', 'by-class']
+        )]
         string $mode = 'default',
     ): string {
         $args = $this->buildPhpunitArgs(

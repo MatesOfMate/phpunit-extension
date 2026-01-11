@@ -16,6 +16,7 @@ use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Mcp\Capability\Attribute\McpTool;
+use Mcp\Capability\Attribute\Schema;
 
 /**
  * Runs PHPUnit tests from a specific file with token-optimized output.
@@ -39,9 +40,23 @@ class RunFileTool
         description: 'Run PHPUnit tests from a specific file. Returns token-optimized TOON format. Available modes: "default" (summary + failures/errors), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: testing changes to a single test file, debugging specific test class, focused test execution.'
     )]
     public function execute(
+        #[Schema(
+            description: 'Path to the PHP test file (relative to project root)',
+            pattern: 'Test\.php$'
+        )]
         ?string $file = null,
+        #[Schema(
+            description: 'Filter pattern to match specific test names or methods'
+        )]
         ?string $filter = null,
+        #[Schema(
+            description: 'Stop execution upon first failure or error'
+        )]
         bool $stopOnFailure = false,
+        #[Schema(
+            description: 'Output format mode',
+            enum: ['default', 'summary', 'detailed']
+        )]
         string $mode = 'default',
     ): string {
         if (null === $file) {
