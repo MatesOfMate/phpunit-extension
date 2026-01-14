@@ -3,7 +3,16 @@
     "description": "PHPUnit extension for symfony/ai-mate providing token-optimized test execution tools",
     "type": "symfony-ai-mate",
     "license": "MIT",
-    "keywords": ["phpunit", "testing", "ai-mate", "mcp", "test-automation", "toon", "symfony", "ai"],
+    "keywords": [
+        "phpunit",
+        "testing",
+        "ai-mate",
+        "mcp",
+        "test-automation",
+        "toon",
+        "symfony",
+        "ai"
+    ],
     "authors": [
         {
             "name": "Johannes Wachter",
@@ -12,8 +21,8 @@
     ],
     "require": {
         "php": ">=8.2",
-        "matesofmate/common": "^0.1@dev",
         "helgesverre/toon": "^1.0",
+        "matesofmate/common": "^0.1@dev",
         "symfony/ai-mate": "^0.1 || ^0.2@dev",
         "symfony/finder": "^5.4|^6.4|^7.3|^8.0",
         "symfony/process": "^5.4|^6.4|^7.3|^8.0"
@@ -40,7 +49,9 @@
             "scan-dirs": [
                 "src/Capability"
             ],
-            "includes": ["config/config.php"]
+            "includes": [
+                "config/config.php"
+            ]
         },
         "branch-alias": {
             "dev-main": "0.1.x-dev"
