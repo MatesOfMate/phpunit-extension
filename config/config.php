@@ -22,6 +22,8 @@ use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+
 return static function (ContainerConfigurator $container): void {
     $services = $container->services()
         ->defaults()
@@ -29,9 +31,10 @@ return static function (ContainerConfigurator $container): void {
         ->autoconfigure();
 
     // Core infrastructure
-    $services->set(ProcessExecutor::class)
+    $services->set('matesofmate_phpunit.process_executor', ProcessExecutor::class)
         ->arg('$vendorPaths', ['%mate.root_dir%/vendor/bin/phpunit']);
-    $services->set(PhpunitRunner::class);
+    $services->set(PhpunitRunner::class)
+        ->arg('$executor', service('matesofmate_phpunit.process_executor'));
 
     $services->set(JunitXmlParser::class);
     $services->set(ToonFormatter::class);
