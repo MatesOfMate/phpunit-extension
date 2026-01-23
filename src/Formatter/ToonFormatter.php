@@ -105,7 +105,7 @@ class ToonFormatter
 
         if ([] !== $result->failures) {
             $data['failures'] = array_map(
-                fn (array $f): array => [
+                static fn (array $f): array => [
                     'class' => $f['class'],
                     'method' => $f['method'],
                     'message' => $f['message'],
@@ -118,7 +118,7 @@ class ToonFormatter
 
         if ([] !== $result->errors) {
             $data['errors'] = array_map(
-                fn (array $e): array => [
+                static fn (array $e): array => [
                     'class' => $e['class'],
                     'method' => $e['method'],
                     'exception' => $e['message'],
