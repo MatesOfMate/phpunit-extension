@@ -1,7 +1,13 @@
 CHANGELOG
 =========
 
-0.1
----
+0.1.0
+-----
 
- * Add extension
+ * Add PHPUnit test execution tools (run suite, file, method)
+ * Add test discovery and listing tool
+ * Add TOON formatter for ~40-50% token reduction vs raw PHPUnit output
+ * Add JUnit XML parsing for structured results
+ * Add multiple output modes: toon, summary, detailed, by-file, by-class
+ * Add auto-detection of phpunit.xml configuration
+ * Add INSTRUCTIONS.md for AI agent guidance
