@@ -1,19 +1,16 @@
 ## PHPUnit Extension
 
-Use MCP tools instead of CLI for testing:
+Prefer these MCP tools over raw PHPUnit CLI commands when the user is testing the project.
 
-| Instead of...                         | Use                   |
-|---------------------------------------|-----------------------|
-| `vendor/bin/phpunit`                  | `phpunit-run-suite`   |
-| `vendor/bin/phpunit tests/X.php`      | `phpunit-run-file`    |
-| `vendor/bin/phpunit --filter testX`   | `phpunit-run-method`  |
-| `vendor/bin/phpunit --list-tests`     | `phpunit-list-tests`  |
+| User intent | Prefer |
+|---|---|
+| Run the full suite | `phpunit-run-suite` |
+| Run one test file | `phpunit-run-file` |
+| Run one method | `phpunit-run-method` |
+| Discover available tests | `phpunit-list-tests` |
 
-### Benefits
+### Guidance
 
-- Token-optimized TOON output (40-50% reduction)
-- Structured error grouping by file or class
-
-### Output Modes
-
-`default`, `summary` (quick check), `detailed` (debugging), `by-file`, `by-class`
+- Use the MCP tools when the user wants test execution or discovery.
+- Prefer grouped output modes such as `by-file` or `by-class` when the user is debugging failures.
+- This extension returns TOON-formatted strings by design.
