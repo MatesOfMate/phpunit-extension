@@ -19,6 +19,25 @@ composer require --dev matesofmate/phpunit-extension
 
 The extension is automatically discovered by Symfony AI Mate.
 
+## Custom Command Configuration
+
+If PHPUnit is not directly available on the host, you can override the command used by the extension.
+
+This is useful for Docker-based setups where tests must run inside a container. When `matesofmate_phpunit.custom_command` is configured, the extension runs that command from the project root instead of resolving a local binary.
+
+```php
+// config/packages/matesofmate.php
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
+return static function (ContainerConfigurator $container): void {
+    $container->parameters()->set('matesofmate_phpunit.custom_command', [
+        'docker', 'compose', 'exec', 'php-test', 'vendor/bin/phpunit',
+    ]);
+};
+```
+
+For custom-command execution, JUnit XML is written to `var/` using a relative path so it resolves correctly inside the container and on the host. If JUnit XML cannot be parsed, the tools fall back to raw stdout/stderr output.
+
 ## Available Tools
 
 ### `phpunit_run_suite`
@@ -193,7 +212,7 @@ Return to AI Assistant
 
 ### PHP Binary Detection
 
-The extension automatically uses the same PHP binary that's currently running (`PHP_BINARY`), ensuring consistency between your environment and test execution.
+By default, the extension automatically uses the same PHP binary that's currently running (`PHP_BINARY`), ensuring consistency between your environment and test execution. When `custom_command` is configured, that command is used instead.
 
 ## Development
 

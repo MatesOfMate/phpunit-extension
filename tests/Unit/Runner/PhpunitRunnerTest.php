@@ -109,4 +109,82 @@ class PhpunitRunnerTest extends TestCase
         // Cleanup
         $result->cleanup();
     }
+
+    public function testCustomCommandUsesProjectVarDirForJunitPath(): void
+    {
+        $projectRoot = sys_get_temp_dir().'/phpunit_runner_test_'.bin2hex(random_bytes(4));
+        mkdir($projectRoot, 0777, true);
+
+        try {
+            $executor = $this->createMock(ProcessExecutor::class);
+            $executor->expects($this->never())->method('execute');
+
+            $runner = new PhpunitRunner(
+                $executor,
+                $projectRoot,
+                [\PHP_BINARY, '-r', 'fwrite(STDERR, "custom command failure"); exit(1);'],
+            );
+
+            $result = $runner->run(['--filter', 'SomeTest']);
+
+            $this->assertDirectoryExists($projectRoot.'/var');
+            $this->assertStringStartsWith($projectRoot.'/var/phpunit_junit_', $result->junitXmlPath);
+            $this->assertStringEndsWith('.xml', $result->junitXmlPath);
+        } finally {
+            // Cleanup
+            if (isset($result)) {
+                $result->cleanup();
+            }
+            @rmdir($projectRoot.'/var');
+            @rmdir($projectRoot);
+        }
+    }
+
+    public function testCustomCommandThrowsWhenVarDirectoryCannotBeCreated(): void
+    {
+        $projectRoot = sys_get_temp_dir().'/phpunit_runner_test_'.bin2hex(random_bytes(4));
+        mkdir($projectRoot, 0777, true);
+        file_put_contents($projectRoot.'/var', 'blocking file');
+
+        try {
+            $executor = $this->createMock(ProcessExecutor::class);
+            $executor->expects($this->never())->method('execute');
+
+            $runner = new PhpunitRunner(
+                $executor,
+                $projectRoot,
+                [\PHP_BINARY, '-r', 'exit(1);'],
+            );
+
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('Failed to create PHPUnit JUnit directory');
+
+            $runner->run([]);
+        } finally {
+            @unlink($projectRoot.'/var');
+            @rmdir($projectRoot);
+        }
+    }
+
+    public function testDefaultBehaviorUnchangedWithEmptyCustomCommand(): void
+    {
+        $executor = $this->createMock(ProcessExecutor::class);
+        $executor->expects($this->once())
+            ->method('execute')
+            ->with(
+                'phpunit',
+                $this->callback(static fn (array $args): bool => \in_array('--log-junit', $args, true)),
+                300,
+                true
+            )
+            ->willReturn(new ProcessResult(0, 'test output', ''));
+
+        $runner = new PhpunitRunner($executor, '/some/root', []);
+        $result = $runner->run(['--version']);
+
+        $this->assertSame(0, $result->exitCode);
+        $this->assertSame('test output', $result->output);
+
+        $result->cleanup();
+    }
 }

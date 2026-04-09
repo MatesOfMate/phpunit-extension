@@ -55,11 +55,22 @@ class RunFileTool
         );
 
         $runResult = $this->runner->run($args);
-        $testResult = $this->parser->parse($runResult->getJunitXml());
-        $output = $this->formatter->format($testResult, $mode);
 
-        $runResult->cleanup();
+        try {
+            try {
+                $testResult = $this->parser->parse($runResult->getJunitXml());
 
-        return $output;
+                return $this->formatter->format($testResult, $mode);
+            } catch (\Throwable) {
+                $output = $runResult->output;
+                if ('' !== $runResult->errorOutput) {
+                    $output .= "\n\n".$runResult->errorOutput;
+                }
+
+                return $output;
+            }
+        } finally {
+            $runResult->cleanup();
+        }
     }
 }

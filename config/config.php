@@ -30,11 +30,15 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure();
 
+    $container->parameters()->set('matesofmate_phpunit.custom_command', []);
+
     // Core infrastructure
     $services->set('matesofmate_phpunit.process_executor', ProcessExecutor::class)
         ->arg('$vendorPaths', ['%mate.root_dir%/vendor/bin/phpunit']);
     $services->set(PhpunitRunner::class)
-        ->arg('$executor', service('matesofmate_phpunit.process_executor'));
+        ->arg('$executor', service('matesofmate_phpunit.process_executor'))
+        ->arg('$projectRoot', '%mate.root_dir%')
+        ->arg('$customCommand', '%matesofmate_phpunit.custom_command%');
 
     $services->set(JunitXmlParser::class);
     $services->set(ToonFormatter::class);
