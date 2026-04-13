@@ -36,7 +36,7 @@ class RunMethodTool
 
     #[McpTool(
         name: 'phpunit-run-method',
-        description: 'Run a single PHPUnit test method. Returns token-optimized TOON format. Available modes: "default" (summary + failure/error details), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: debugging a specific failing test, verifying a single test fix, isolated test execution.'
+        description: 'Run a single PHPUnit test method. Returns compact encoded output. Available modes: "default" (summary + failure/error details), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: debugging a specific failing test, verifying a single test fix, isolated test execution.'
     )]
     public function execute(
         string $class,

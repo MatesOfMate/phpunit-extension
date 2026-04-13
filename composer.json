@@ -21,9 +21,8 @@
     ],
     "require": {
         "php": ">=8.2",
-        "helgesverre/toon": "^1.0 || ^2.0 || ^3.0",
         "matesofmate/common": "^0.2@dev",
-        "symfony/ai-mate": "^0.6",
+        "symfony/ai-mate": "^0.7",
         "symfony/finder": "^5.4|^6.4|^7.3|^8.0",
         "symfony/process": "^5.4|^6.4|^7.3|^8.0"
     },
@@ -33,6 +32,9 @@
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "rector/rector": "^2.0"
+    },
+    "suggest": {
+        "helgesverre/toon": "Install for TOON-encoded MCP responses; JSON remains the fallback when it is not available"
     },
     "autoload": {
         "psr-4": {

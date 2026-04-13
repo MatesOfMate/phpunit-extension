@@ -4,7 +4,7 @@ Guidance for working on the PHPUnit extension.
 
 ## Overview
 
-This package provides TOON-first PHPUnit execution and discovery tools for Symfony AI Mate.
+This package provides PHPUnit execution and discovery tools for Symfony AI Mate using Mate's core response encoder.
 
 ## Current Mate Workflow
 
@@ -19,14 +19,14 @@ This package provides TOON-first PHPUnit execution and discovery tools for Symfo
 - `src/Capability/` contains the tools
 - `src/Runner/` executes PHPUnit
 - `src/Parser/` parses JUnit XML
-- `src/Formatter/` produces TOON output
+- `src/Formatter/` produces encoded MCP output
 - `src/Discovery/` lists tests
 - `config/config.php` registers services
 
 ## Output Strategy
 
-- This package intentionally returns TOON-formatted strings.
-- Upstream `symfony/ai` PR `#1439` introduces an optional encoder direction, but this package currently stays explicitly TOON-first.
+- This package returns encoded strings through Mate's core `ResponseEncoder`.
+- Describe TOON as optional runtime behavior with JSON fallback.
 
 ## Service Registration
 

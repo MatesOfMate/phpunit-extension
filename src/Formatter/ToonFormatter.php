@@ -12,9 +12,10 @@
 namespace MatesOfMate\PHPUnitExtension\Formatter;
 
 use MatesOfMate\PHPUnitExtension\Parser\TestResult;
+use Symfony\AI\Mate\Encoding\ResponseEncoder;
 
 /**
- * Formats test results using TOON (Token-Oriented Object Notation) for token-efficient output.
+ * Formats test results for compact MCP responses.
  *
  * @internal
  *
@@ -75,12 +76,12 @@ class ToonFormatter
             );
         }
 
-        return toon($data);
+        return ResponseEncoder::encode($data);
     }
 
     private function formatSummary(TestResult $result): string
     {
-        return toon([
+        return ResponseEncoder::encode([
             'tests' => $result->getTests(),
             'passed' => $result->getPassed(),
             'failed' => $result->getFailed(),
@@ -129,7 +130,7 @@ class ToonFormatter
             );
         }
 
-        return toon($data);
+        return ResponseEncoder::encode($data);
     }
 
     private function formatByFile(TestResult $result): string
@@ -156,7 +157,7 @@ class ToonFormatter
             'by_file' => $grouped,
         ];
 
-        return toon($data);
+        return ResponseEncoder::encode($data);
     }
 
     private function formatByClass(TestResult $result): string
@@ -183,7 +184,7 @@ class ToonFormatter
             'by_class' => $grouped,
         ];
 
-        return toon($data);
+        return ResponseEncoder::encode($data);
     }
 
     private function shortClassName(string $fqcn): string

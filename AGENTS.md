@@ -10,8 +10,8 @@ Maintain a package-specific MCP extension for PHPUnit workflows. Keep docs groun
 
 - Register capabilities in `config/config.php`.
 - Keep docs aligned with current Mate setup and troubleshooting commands.
-- This package is TOON-first by design.
-- If you mention upstream PR `#1439`, describe it as upstream direction rather than current package behavior.
+- This package uses Mate's core `ResponseEncoder` for MCP-facing payloads.
+- Describe TOON as optional runtime behavior provided by Mate, with JSON fallback.
 
 ## When Updating Behavior
 

@@ -14,6 +14,7 @@ namespace MatesOfMate\PHPUnitExtension\Capability;
 use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Discovery\TestDiscovery;
 use Mcp\Capability\Attribute\McpTool;
+use Symfony\AI\Mate\Encoding\ResponseEncoder;
 
 /**
  * Lists all available PHPUnit tests in the project.
@@ -30,7 +31,7 @@ class ListTestsTool
 
     #[McpTool(
         name: 'phpunit-list-tests',
-        description: 'List all available PHPUnit tests in the project. Returns TOON-formatted list of test files, classes, and methods. Use for: discovering available tests, understanding test structure, finding tests to run. Optionally filter by directory.'
+        description: 'List all available PHPUnit tests in the project. Returns an encoded structured list of test files, classes, and methods. Use for: discovering available tests, understanding test structure, finding tests to run. Optionally filter by directory.'
     )]
     public function execute(?string $directory = null): string
     {
@@ -38,6 +39,6 @@ class ListTestsTool
 
         $tests = $this->discovery->discoverTests($directories);
 
-        return toon(['tests' => $tests]);
+        return ResponseEncoder::encode(['tests' => $tests]);
     }
 }

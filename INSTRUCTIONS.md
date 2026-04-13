@@ -13,4 +13,4 @@ Prefer these MCP tools over raw PHPUnit CLI commands when the user is testing th
 
 - Use the MCP tools when the user wants test execution or discovery.
 - Prefer grouped output modes such as `by-file` or `by-class` when the user is debugging failures.
-- This extension returns TOON-formatted strings by design.
+- This extension returns encoded structured payloads through Mate's core encoder.

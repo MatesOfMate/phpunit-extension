@@ -36,7 +36,7 @@ class RunFileTool
 
     #[McpTool(
         name: 'phpunit-run-file',
-        description: 'Run PHPUnit tests from a specific file. Returns token-optimized TOON format. Available modes: "default" (summary + failures/errors), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: testing changes to a single test file, debugging specific test class, focused test execution.'
+        description: 'Run PHPUnit tests from a specific file. Returns compact encoded output. Available modes: "default" (summary + failures/errors), "summary" (just totals and status), "detailed" (full error messages without truncation). Use for: testing changes to a single test file, debugging specific test class, focused test execution.'
     )]
     public function execute(
         string $file,

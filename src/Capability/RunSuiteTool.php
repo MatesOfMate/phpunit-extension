@@ -36,7 +36,7 @@ class RunSuiteTool
 
     #[McpTool(
         name: 'phpunit-run-suite',
-        description: 'Run the full PHPUnit test suite. Returns token-optimized TOON format. Available modes: "default" (summary + failures/errors with truncated messages), "summary" (just totals and status), "detailed" (full error messages without truncation), "by-file" (errors grouped by file path), "by-class" (errors grouped by test class). Use for: running all tests, CI validation, checking overall test health.'
+        description: 'Run the full PHPUnit test suite. Returns compact encoded output. Available modes: "default" (summary + failures/errors with truncated messages), "summary" (just totals and status), "detailed" (full error messages without truncation), "by-file" (errors grouped by file path), "by-class" (errors grouped by test class). Use for: running all tests, CI validation, checking overall test health.'
     )]
     public function execute(
         ?string $configuration = null,

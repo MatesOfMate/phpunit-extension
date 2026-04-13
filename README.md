@@ -1,12 +1,12 @@
 # PHPUnit Extension for Symfony AI Mate
 
-Token-efficient PHPUnit tools for AI assistants. This package runs tests and returns TOON-formatted responses designed for debugging and iteration.
+Token-efficient PHPUnit tools for AI assistants. This package runs tests and returns encoded structured responses designed for debugging and iteration.
 
 ## Features
 
 - run the full suite, a file, or a single method
 - list discoverable tests
-- TOON output with summary and grouping modes
+- encoded output with summary and grouping modes
 - custom command support for containerized setups
 
 ## Installation
@@ -49,7 +49,7 @@ return static function (ContainerConfigurator $container): void {
 ## Requirements
 
 - PHP 8.2+
-- Symfony AI Mate 0.6+ recommended
+- Symfony AI Mate 0.7+ required
 - PHPUnit available locally, or a custom command configured
 
 ## Available Tools
@@ -59,7 +59,7 @@ return static function (ContainerConfigurator $container): void {
 - `phpunit-run-method`
 - `phpunit-list-tests`
 
-All tools return TOON-formatted strings in this package. That remains the intended package behavior even though upstream `symfony/ai` is exploring optional TOON with JSON fallback in PR `#1439`.
+All tools return encoded strings through Mate's core `ResponseEncoder`. Install the suggested `helgesverre/toon` package if you want TOON responses; otherwise the same payload falls back to JSON.
 
 ## Output Modes
 
