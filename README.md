@@ -4,9 +4,9 @@ Token-efficient PHPUnit tools for AI assistants. This package runs tests and ret
 
 ## Features
 
-- run the full suite, a file, or a single method
+- run the full suite, a file, a class, or a single method through one tool
 - list discoverable tests
-- encoded output with summary and grouping modes
+- encoded output with three consistent detail modes
 - custom command support for containerized setups
 
 ## Installation
@@ -54,9 +54,7 @@ return static function (ContainerConfigurator $container): void {
 
 ## Available Tools
 
-- `phpunit-run-suite`
-- `phpunit-run-file`
-- `phpunit-run-method`
+- `phpunit-run`
 - `phpunit-list-tests`
 
 All tools return encoded strings through Mate's core `ResponseEncoder`. Install the suggested `helgesverre/toon` package if you want TOON responses; otherwise the same payload falls back to JSON.
@@ -66,8 +64,6 @@ All tools return encoded strings through Mate's core `ResponseEncoder`. Install 
 - `default`
 - `summary`
 - `detailed`
-- `by-file`
-- `by-class`
 
 ## Development
 

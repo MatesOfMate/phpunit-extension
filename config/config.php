@@ -12,9 +12,7 @@
 use MatesOfMate\Common\Process\ProcessExecutor;
 use MatesOfMate\Common\Truncator\MessageTruncator;
 use MatesOfMate\PHPUnitExtension\Capability\ListTestsTool;
-use MatesOfMate\PHPUnitExtension\Capability\RunFileTool;
-use MatesOfMate\PHPUnitExtension\Capability\RunMethodTool;
-use MatesOfMate\PHPUnitExtension\Capability\RunSuiteTool;
+use MatesOfMate\PHPUnitExtension\Capability\RunTool;
 use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Discovery\TestDiscovery;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
@@ -55,8 +53,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$projectRoot', '%mate.root_dir%');
 
     // Tools - automatically discovered by #[McpTool] attribute
-    $services->set(RunSuiteTool::class);
-    $services->set(RunFileTool::class);
-    $services->set(RunMethodTool::class);
+    $services->set(RunTool::class);
     $services->set(ListTestsTool::class);
 };

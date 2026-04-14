@@ -37,7 +37,7 @@ class ToonFormatterTest extends TestCase
         $this->formatter->format($testResult, 'invalid');
     }
 
-    public function testFormatToonModeReturnsValidToonString(): void
+    public function testFormatDefaultModeReturnsValidEncodedString(): void
     {
         $testResult = $this->createSuccessfulResult();
 
@@ -49,7 +49,7 @@ class ToonFormatterTest extends TestCase
         $this->assertStringContainsString('OK', $output);
     }
 
-    public function testFormatToonModeWithFailures(): void
+    public function testFormatDefaultModeWithFailures(): void
     {
         $testResult = new TestResult(
             summary: [
@@ -116,78 +116,6 @@ class ToonFormatterTest extends TestCase
 
         $this->assertStringContainsString('UserTest', $output); // Class name present
         $this->assertStringContainsString('/path/to/UserTest.php', $output); // Full path
-    }
-
-    public function testFormatByFileGroupsByFilename(): void
-    {
-        $testResult = new TestResult(
-            summary: [
-                'tests' => 10,
-                'failures' => 2,
-                'errors' => 0,
-                'warnings' => 0,
-                'skipped' => 0,
-                'time' => 5.5,
-            ],
-            failures: [
-                [
-                    'class' => 'UserTest',
-                    'method' => 'testCreate',
-                    'message' => 'Failed',
-                    'file' => '/path/to/UserTest.php',
-                    'line' => 45,
-                ],
-                [
-                    'class' => 'UserTest',
-                    'method' => 'testUpdate',
-                    'message' => 'Failed',
-                    'file' => '/path/to/UserTest.php',
-                    'line' => 50,
-                ],
-            ],
-            errors: []
-        );
-
-        $output = $this->formatter->format($testResult, 'by-file');
-
-        $this->assertStringContainsString('by_file', $output);
-        $this->assertStringContainsString('UserTest.php', $output);
-    }
-
-    public function testFormatByClassGroupsByClassName(): void
-    {
-        $testResult = new TestResult(
-            summary: [
-                'tests' => 10,
-                'failures' => 2,
-                'errors' => 0,
-                'warnings' => 0,
-                'skipped' => 0,
-                'time' => 5.5,
-            ],
-            failures: [
-                [
-                    'class' => 'App\\Tests\\UserTest',
-                    'method' => 'testCreate',
-                    'message' => 'Failed',
-                    'file' => '/path/to/UserTest.php',
-                    'line' => 45,
-                ],
-                [
-                    'class' => 'App\\Tests\\UserTest',
-                    'method' => 'testUpdate',
-                    'message' => 'Failed',
-                    'file' => '/path/to/UserTest.php',
-                    'line' => 50,
-                ],
-            ],
-            errors: []
-        );
-
-        $output = $this->formatter->format($testResult, 'by-class');
-
-        $this->assertStringContainsString('by_class', $output);
-        $this->assertStringContainsString('UserTest', $output);
     }
 
     public function testFormatWithErrors(): void

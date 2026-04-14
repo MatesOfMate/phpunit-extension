@@ -29,8 +29,6 @@ class ToonFormatter
             'default' => $this->formatDefault($result),
             'summary' => $this->formatSummary($result),
             'detailed' => $this->formatDetailed($result),
-            'by-file' => $this->formatByFile($result),
-            'by-class' => $this->formatByClass($result),
             default => throw new \InvalidArgumentException("Unknown format mode: {$mode}"),
         };
     }
@@ -129,60 +127,6 @@ class ToonFormatter
                 $result->errors
             );
         }
-
-        return ResponseEncoder::encode($data);
-    }
-
-    private function formatByFile(TestResult $result): string
-    {
-        $allIssues = [...$result->failures, ...$result->errors];
-        $grouped = [];
-
-        foreach ($allIssues as $issue) {
-            $file = basename((string) $issue['file']);
-            $grouped[$file][] = $issue;
-        }
-
-        ksort($grouped);
-
-        $data = [
-            'summary' => [
-                'tests' => $result->getTests(),
-                'passed' => $result->getPassed(),
-                'failed' => $result->getFailed(),
-                'errors' => $result->getErrors(),
-                'time' => round($result->getTime(), 3).'s',
-            ],
-            'status' => $result->wasSuccessful() ? 'OK' : 'FAILED',
-            'by_file' => $grouped,
-        ];
-
-        return ResponseEncoder::encode($data);
-    }
-
-    private function formatByClass(TestResult $result): string
-    {
-        $allIssues = [...$result->failures, ...$result->errors];
-        $grouped = [];
-
-        foreach ($allIssues as $issue) {
-            $class = $this->shortClassName($issue['class']);
-            $grouped[$class][] = $issue;
-        }
-
-        ksort($grouped);
-
-        $data = [
-            'summary' => [
-                'tests' => $result->getTests(),
-                'passed' => $result->getPassed(),
-                'failed' => $result->getFailed(),
-                'errors' => $result->getErrors(),
-                'time' => round($result->getTime(), 3).'s',
-            ],
-            'status' => $result->wasSuccessful() ? 'OK' : 'FAILED',
-            'by_class' => $grouped,
-        ];
 
         return ResponseEncoder::encode($data);
     }

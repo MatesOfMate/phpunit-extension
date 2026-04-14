@@ -4,13 +4,11 @@ Prefer these MCP tools over raw PHPUnit CLI commands when the user is testing th
 
 | User intent | Prefer |
 |---|---|
-| Run the full suite | `phpunit-run-suite` |
-| Run one test file | `phpunit-run-file` |
-| Run one method | `phpunit-run-method` |
+| Run the full suite, one file, one class, or one method | `phpunit-run` |
 | Discover available tests | `phpunit-list-tests` |
 
 ### Guidance
 
 - Use the MCP tools when the user wants test execution or discovery.
-- Prefer grouped output modes such as `by-file` or `by-class` when the user is debugging failures.
+- Use the `file`, `class`, `method`, and `filter` parameters on `phpunit-run` instead of switching between multiple tool names.
 - This extension returns encoded structured payloads through Mate's core encoder.
