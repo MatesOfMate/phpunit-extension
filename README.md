@@ -49,7 +49,7 @@ return static function (ContainerConfigurator $container): void {
 ## Requirements
 
 - PHP 8.2+
-- Symfony AI Mate 0.7+ required
+- Symfony AI Mate 0.8+ required
 - PHPUnit available locally, or a custom command configured
 
 ## Available Tools
