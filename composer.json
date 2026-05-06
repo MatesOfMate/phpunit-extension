@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "matesofmate/common": "^0.2@dev",
+        "matesofmate/common": "^0.3",
         "symfony/ai-mate": "^0.8",
         "symfony/finder": "^5.4|^6.4|^7.3|^8.0",
         "symfony/process": "^5.4|^6.4|^7.3|^8.0"
@@ -57,7 +57,7 @@
             "instructions": "INSTRUCTIONS.md"
         },
         "branch-alias": {
-            "dev-main": "0.2.x-dev"
+            "dev-main": "0.3.x-dev"
         }
     },
     "scripts": {
@@ -73,6 +73,8 @@
             "vendor/bin/php-cs-fixer fix"
         ]
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "sort-packages": true,
         "allow-plugins": {
