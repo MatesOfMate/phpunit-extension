@@ -32,10 +32,7 @@ class ListTestsTool
     /**
      * @param string|null $directory Limit discovery to a specific directory. Defaults to detected test directories.
      */
-    #[McpTool(
-        name: 'phpunit-list-tests',
-        description: 'List discoverable PHPUnit tests so the AI can find files, classes, and methods to run.'
-    )]
+    #[McpTool(name: 'phpunit-list-tests', title: 'PHPUnit List Tests', description: 'List discoverable PHPUnit tests so the AI can find files, classes, and methods to run.')]
     public function execute(?string $directory = null): string
     {
         $directories = $directory ? [$directory] : $this->configDetector->getTestDirectories();

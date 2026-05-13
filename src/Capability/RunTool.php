@@ -43,10 +43,7 @@ class RunTool
      * @param bool        $stopOnFailure stop after the first failure
      * @param string      $mode          output detail level: default, summary, or detailed
      */
-    #[McpTool(
-        name: 'phpunit-run',
-        description: 'Run PHPUnit tests. Use this for the full suite, a single test file, a class, or a specific test method.'
-    )]
+    #[McpTool(name: 'phpunit-run', title: 'PHPUnit Run', description: 'Run PHPUnit tests. Use this for the full suite, a single test file, a class, or a specific test method.')]
     public function execute(
         ?string $file = null,
         ?string $class = null,
