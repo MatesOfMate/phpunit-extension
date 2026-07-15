@@ -21,8 +21,8 @@
     ],
     "require": {
         "php": ">=8.2",
-        "matesofmate/common": "^0.3",
-        "symfony/ai-mate": "^0.10 || dev-main",
+        "matesofmate/common": "^0.3 || ^0.4@dev",
+        "symfony/ai-mate": "^0.11 || dev-main",
         "symfony/finder": "^5.4|^6.4|^7.3|^8.0",
         "symfony/process": "^5.4|^6.4|^7.3|^8.0"
     },
@@ -57,7 +57,7 @@
             "instructions": "INSTRUCTIONS.md"
         },
         "branch-alias": {
-            "dev-main": "0.3.x-dev"
+            "dev-main": "0.4.x-dev"
         }
     },
     "scripts": {
