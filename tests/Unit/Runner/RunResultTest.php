@@ -112,6 +112,7 @@ class RunResultTest extends TestCase
         $this->assertFileDoesNotExist($tempFile);
     }
 
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testCleanupDoesNotThrowWhenFileDoesNotExist(): void
     {
         $result = new RunResult(
@@ -122,7 +123,5 @@ class RunResultTest extends TestCase
         );
 
         $result->cleanup();
-
-        $this->addToAssertionCount(1); // No exception thrown
     }
 }
