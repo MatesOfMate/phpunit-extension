@@ -15,7 +15,7 @@ use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
-use Mcp\Capability\Attribute\McpTool;
+use Symfony\AI\Mate\Attribute\MateTool;
 
 /**
  * Runs PHPUnit using a single flexible entrypoint.
@@ -43,7 +43,7 @@ class RunTool
      * @param bool        $stopOnFailure stop after the first failure
      * @param string      $mode          output detail level: default, summary, or detailed
      */
-    #[McpTool(name: 'phpunit-run', title: 'PHPUnit Run', description: 'Run PHPUnit tests. Use this for the full suite, a single test file, a class, or a specific test method.')]
+    #[MateTool(name: 'phpunit-run', title: 'PHPUnit Run', description: 'Run PHPUnit tests. Use this for the full suite, a single test file, a class, or a specific test method.')]
     public function execute(
         ?string $file = null,
         ?string $class = null,

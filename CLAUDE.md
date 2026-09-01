@@ -11,7 +11,7 @@ This package provides PHPUnit execution and discovery tools for Symfony AI Mate 
 - initialize projects with `vendor/bin/mate init`
 - current Mate setups auto-discover extensions after install and update
 - `vendor/bin/mate discover` refreshes extension state and generated instructions
-- `./bin/codex` is the correct Codex entrypoint
+- run tools from the CLI with `vendor/bin/mate tools:call <tool> --<param>=<value>`
 - `vendor/bin/mate debug:extensions` and `vendor/bin/mate debug:capabilities` are the primary troubleshooting commands
 
 ## Structure
@@ -19,7 +19,7 @@ This package provides PHPUnit execution and discovery tools for Symfony AI Mate 
 - `src/Capability/` contains the tools
 - `src/Runner/` executes PHPUnit
 - `src/Parser/` parses JUnit XML
-- `src/Formatter/` produces encoded MCP output
+- `src/Formatter/` produces encoded Mate output
 - `src/Discovery/` lists tests
 - `config/config.php` registers services
 
@@ -39,7 +39,7 @@ composer install
 composer test
 composer lint
 composer fix
-vendor/bin/mate mcp:tools:list --extension=matesofmate/phpunit-extension
+vendor/bin/mate tools:list --extension=matesofmate/phpunit-extension
 ```
 
 ## Standards

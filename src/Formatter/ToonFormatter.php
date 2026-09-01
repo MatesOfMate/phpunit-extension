@@ -15,7 +15,7 @@ use MatesOfMate\PHPUnitExtension\Parser\TestResult;
 use Symfony\AI\Mate\Encoding\ResponseEncoder;
 
 /**
- * Formats test results for compact MCP responses.
+ * Formats test results for compact tool responses.
  *
  * @internal
  *

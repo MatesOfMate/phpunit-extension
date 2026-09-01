@@ -13,7 +13,7 @@ namespace MatesOfMate\PHPUnitExtension\Capability;
 
 use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Discovery\TestDiscovery;
-use Mcp\Capability\Attribute\McpTool;
+use Symfony\AI\Mate\Attribute\MateTool;
 use Symfony\AI\Mate\Encoding\ResponseEncoder;
 
 /**
@@ -32,7 +32,7 @@ class ListTestsTool
     /**
      * @param string|null $directory Limit discovery to a specific directory. Defaults to detected test directories.
      */
-    #[McpTool(name: 'phpunit-list-tests', title: 'PHPUnit List Tests', description: 'List discoverable PHPUnit tests so the AI can find files, classes, and methods to run.')]
+    #[MateTool(name: 'phpunit-list-tests', title: 'PHPUnit List Tests', description: 'List discoverable PHPUnit tests so the AI can find files, classes, and methods to run.')]
     public function execute(?string $directory = null): string
     {
         $directories = $directory ? [$directory] : $this->configDetector->getTestDirectories();

@@ -52,7 +52,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(TestDiscovery::class)
         ->arg('$projectRoot', '%mate.root_dir%');
 
-    // Tools - automatically discovered by #[McpTool] attribute
+    // Tools - automatically discovered by #[MateTool] attribute
     $services->set(RunTool::class);
     $services->set(ListTestsTool::class);
 };
