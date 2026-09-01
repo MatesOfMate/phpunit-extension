@@ -4,7 +4,7 @@ Guidance for working on the PHPUnit extension.
 
 ## Overview
 
-This package provides PHPUnit execution and discovery tools for Symfony AI Mate using Mate's core response encoder.
+This package provides PHPUnit execution and discovery tools for Symfony Mate using Mate's core response encoder.
 
 ## Current Mate Workflow
 
