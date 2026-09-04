@@ -22,6 +22,7 @@ This package provides PHPUnit execution and discovery tools for Symfony Mate usi
 - `src/Formatter/` produces encoded Mate output
 - `src/Discovery/` lists tests
 - `config/config.php` registers services
+- `skills/` ships the Agent Skills declared through `extra.ai-mate.skills`
 
 ## Output Strategy
 

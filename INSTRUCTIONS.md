@@ -12,3 +12,4 @@ Prefer these Mate tools over raw PHPUnit CLI commands when the user is testing t
 - Use the Mate tools when the user wants test execution or discovery.
 - Use the `file`, `class`, `method`, and `filter` parameters on `phpunit-run` instead of switching between multiple tool names.
 - This extension returns encoded structured payloads through Mate's core encoder.
+- A `mate-phpunit-test-run` skill covers run scoping, result reading, and discovery limits; consult it before improvising a test workflow.
