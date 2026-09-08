@@ -11,8 +11,10 @@
 
 namespace MatesOfMate\PHPUnitExtension\Capability;
 
+use MatesOfMate\Common\Cache\RunCache;
 use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
+use MatesOfMate\PHPUnitExtension\Grouping\FailureGrouper;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Symfony\AI\Mate\Attribute\MateTool;
@@ -31,6 +33,8 @@ class RunTool
         private readonly JunitXmlParser $parser,
         private readonly ToonFormatter $formatter,
         private readonly ConfigurationDetector $configDetector,
+        private readonly FailureGrouper $grouper,
+        private readonly RunCache $cache,
     ) {
     }
 
@@ -80,7 +84,10 @@ class RunTool
             try {
                 $testResult = $this->parser->parse($runResult->getJunitXml());
 
-                return $this->formatter->format($testResult, $mode);
+                $groups = $this->grouper->group($this->entriesOf($testResult));
+                $runId = $this->remember($groups, $testResult);
+
+                return $this->formatter->format($testResult, $mode, $runId, $groups);
             } catch (\Throwable) {
                 $output = $runResult->output;
                 if ('' !== $runResult->errorOutput) {
@@ -113,5 +120,37 @@ class RunTool
         }
 
         return $filter;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function entriesOf(\MatesOfMate\PHPUnitExtension\Parser\TestResult $result): array
+    {
+        return array_merge($result->failures, $result->errors);
+    }
+
+    /**
+     * Caching is a convenience, not part of the answer. A cache that cannot be
+     * written must cost the agent a run id, not the whole formatted response:
+     * the catch-all above would otherwise turn an unwritable directory into a
+     * raw dump of the entire PHPUnit output.
+     *
+     * @param array<int, array<string, mixed>> $groups
+     */
+    private function remember(array $groups, \MatesOfMate\PHPUnitExtension\Parser\TestResult $result): ?string
+    {
+        if ([] === $groups) {
+            return null;
+        }
+
+        try {
+            return $this->cache->store([
+                'summary' => $result->summary,
+                'groups' => $groups,
+            ]);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

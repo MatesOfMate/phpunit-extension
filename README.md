@@ -55,6 +55,7 @@ return static function (ContainerConfigurator $container): void {
 ## Available Tools
 
 - `phpunit-run`
+- `phpunit-run-detail`
 - `phpunit-list-tests`
 
 All tools return encoded strings through Mate's core `ResponseEncoder`. Install the suggested `helgesverre/toon` package if you want TOON responses; otherwise the same payload falls back to JSON.
@@ -74,6 +75,29 @@ vendor/bin/mate skills:list
 - `default`
 - `summary`
 - `detailed`
+
+## Grouped Failures
+
+A single broken method usually fails every test that touches it, so `phpunit-run`
+reports failures grouped by cause instead of one entry per failing test. Each
+group carries the number of tests it accounts for and one example test:
+
+```
+groups  [{"id":"g1","count":12,"type":"ExpectationFailedException",
+          "summary":"Failed asserting that two arrays are identical.",
+          "example":"InvoiceTest::testFormat"}]
+next    phpunit-run-detail --id=20260906-105400-123456-a1b2c3 [--group=g1]
+```
+
+Grouping is by failure type and a normalised form of the message, so the same
+assertion about different values or symbols lands in one group.
+
+The full messages are kept on disk under Mate's cache directory, addressable by
+the run id, and `phpunit-run-detail` reads them back without re-running the
+suite. The last 20 runs are kept; storing the twenty-first drops the oldest.
+Messages are shortened by removing unchanged diff context and vendor stack
+frames rather than by cutting at a byte offset, which would keep the preamble
+and discard the changed lines.
 
 ## Development
 

@@ -11,7 +11,6 @@
 
 namespace MatesOfMate\PHPUnitExtension\Tests\Unit\Parser;
 
-use MatesOfMate\Common\Truncator\MessageTruncator;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
@@ -155,9 +154,9 @@ XML;
         $this->assertSame(0.0, $result->summary['time']);
     }
 
-    public function testParseTruncatesLongFailureMessages(): void
+    public function testParseKeepsTheWholeFailureMessage(): void
     {
-        $longMessage = str_repeat('Failed asserting that this is a very long error message that should be truncated. ', 10);
+        $longMessage = str_repeat('Failed asserting that this is a very long error message. ', 10);
         $xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
@@ -171,32 +170,10 @@ XML;
 
         $result = $this->parser->parse($xml);
 
-        $this->assertLessThanOrEqual(200, \strlen((string) $result->failures[0]['message']));
-    }
-
-    public function testParseWithCustomTruncator(): void
-    {
-        $truncator = $this->createMock(MessageTruncator::class);
-        $truncator->expects($this->atLeastOnce())
-            ->method('truncate')
-            ->willReturn('Truncated message');
-
-        $parser = new JunitXmlParser($truncator);
-
-        $xml = <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-    <testsuite name="Test Suite" tests="1" assertions="1" failures="1" errors="0" warnings="0" skipped="0" time="1.0">
-        <testcase name="testExample" class="App\Tests\ExampleTest" file="/path/to/ExampleTest.php" line="10" assertions="1" time="0.5">
-            <failure type="PHPUnit\Framework\ExpectationFailedException">Long failure message</failure>
-        </testcase>
-    </testsuite>
-</testsuites>
-XML;
-
-        $result = $parser->parse($xml);
-
-        $this->assertSame('Truncated message', $result->failures[0]['message']);
+        // The parser used to cut this to 200 characters, which discarded the
+        // changed lines of an assertion diff and left the preamble. Shortening
+        // is the formatter's decision now, and it is made per output mode.
+        $this->assertSame(trim($longMessage), trim((string) $result->failures[0]['message']));
     }
 
     public function testParseHandlesMixedFailuresAndErrors(): void

@@ -9,13 +9,16 @@
  * file that was distributed with this source code.
  */
 
+use MatesOfMate\Common\Cache\RunCache;
 use MatesOfMate\Common\Process\ProcessExecutor;
-use MatesOfMate\Common\Truncator\MessageTruncator;
 use MatesOfMate\PHPUnitExtension\Capability\ListTestsTool;
+use MatesOfMate\PHPUnitExtension\Capability\RunDetailTool;
 use MatesOfMate\PHPUnitExtension\Capability\RunTool;
 use MatesOfMate\PHPUnitExtension\Config\ConfigurationDetector;
 use MatesOfMate\PHPUnitExtension\Discovery\TestDiscovery;
 use MatesOfMate\PHPUnitExtension\Formatter\ToonFormatter;
+use MatesOfMate\PHPUnitExtension\Grouping\FailureGrouper;
+use MatesOfMate\PHPUnitExtension\Grouping\MessageStripper;
 use MatesOfMate\PHPUnitExtension\Parser\JunitXmlParser;
 use MatesOfMate\PHPUnitExtension\Runner\PhpunitRunner;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -39,12 +42,13 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$customCommand', '%matesofmate_phpunit.custom_command%');
 
     $services->set(JunitXmlParser::class);
+    $services->set(FailureGrouper::class);
+    $services->set(MessageStripper::class);
+    $services->set('matesofmate_phpunit.run_cache', RunCache::class)
+        ->arg('$cacheDir', '%mate.cache_dir%')
+        ->arg('$namespace', 'phpunit-runs')
+        ->arg('$keep', 20);
     $services->set(ToonFormatter::class);
-    $services->set(MessageTruncator::class)
-        ->arg('$prefixes', [
-            'Failed asserting that ',
-            'Expectation failed for ',
-        ]);
 
     $services->set(ConfigurationDetector::class)
         ->arg('$projectRoot', '%mate.root_dir%');
@@ -53,6 +57,9 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$projectRoot', '%mate.root_dir%');
 
     // Tools - automatically discovered by #[MateTool] attribute
-    $services->set(RunTool::class);
+    $services->set(RunTool::class)
+        ->arg('$cache', service('matesofmate_phpunit.run_cache'));
     $services->set(ListTestsTool::class);
+    $services->set(RunDetailTool::class)
+        ->arg('$cache', service('matesofmate_phpunit.run_cache'));
 };

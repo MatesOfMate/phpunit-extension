@@ -6,10 +6,12 @@ Prefer these Mate tools over raw PHPUnit CLI commands when the user is testing t
 |---|---|
 | Run the full suite, one file, one class, or one method | `phpunit-run` |
 | Discover available tests | `phpunit-list-tests` |
+| Read the full message behind a reported failure group | `phpunit-run-detail` |
 
 ### Guidance
 
 - Use the Mate tools when the user wants test execution or discovery.
 - Use the `file`, `class`, `method`, and `filter` parameters on `phpunit-run` instead of switching between multiple tool names.
 - This extension returns encoded structured payloads through Mate's core encoder.
+- `phpunit-run` reports failures grouped by cause, with a run id. Read one group or one test in full with `phpunit-run-detail --id=<run> [--group=g1|--test=Class::method]` instead of re-running the suite in a more verbose mode.
 - A `mate-phpunit-test-run` skill covers run scoping, result reading, and discovery limits; consult it before improvising a test workflow.

@@ -4,6 +4,7 @@ CHANGELOG
 0.7.0
 -----
 
+ * Group reported failures by cause instead of listing every failing test, with the full messages reachable through a new `phpunit-run-detail` tool by run id
  * Add a `phpunit-test-run` skill covering run scoping, result reading, and the limits of test discovery
  * Support symfony/ai-mate 0.13
  * Replace the `#[McpTool]` attribute with Mate's native `#[MateTool]`
